@@ -1,0 +1,49 @@
+/* ===== cuentas de clientes ===== */
+#acctbtn .lbl{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#acctbtn.on{background:#fff4c2}
+.acct-ov{position:fixed;inset:0;z-index:300;background:rgba(17,17,17,.55);display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto}
+.acct-ov[hidden]{display:none}
+.acct{background:#fff;border-radius:18px;width:100%;max-width:460px;padding:22px 20px 20px;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative}
+.acct h2{font-family:inherit;font-size:24px;line-height:1.2;margin:0 0 6px;font-weight:800}
+.acct p.sub{margin:0 0 14px;color:#555;font-size:15px}
+.acct .x{position:absolute;top:10px;right:10px;width:42px;height:42px;border:0;border-radius:12px;background:#f2f2f2;font-size:22px;line-height:1;cursor:pointer}
+.acct .tabs{display:flex;gap:6px;margin:4px 0 16px;background:#f2f2f2;border-radius:12px;padding:4px}
+.acct .tabs button{flex:1;height:42px;border:0;border-radius:9px;background:transparent;font-weight:700;font-size:15px;cursor:pointer}
+.acct .tabs button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.acct .f{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.acct .f label{font-weight:700;font-size:14.5px}
+.acct .f input,.acct .f textarea{height:48px;border:1.5px solid #cfcfcf;border-radius:11px;padding:0 13px;font-size:16px;font-family:inherit;background:#fff}
+.acct .f textarea{height:76px;padding:10px 13px;resize:vertical}
+.acct .f input:focus,.acct .f textarea:focus{outline:3px solid #ffd23f;border-color:#111}
+.acct .pw{position:relative}
+.acct .pw input{width:100%;padding-right:78px;box-sizing:border-box}
+.acct .pw button{position:absolute;right:6px;top:6px;height:36px;border:0;border-radius:8px;background:#f2f2f2;font-weight:700;padding:0 10px;cursor:pointer}
+.acct .chk{display:flex;gap:10px;align-items:flex-start;margin:4px 0 12px;font-size:15px}
+.acct .chk input{width:22px;height:22px;margin:0}
+.acct .msg{min-height:20px;margin:4px 0 10px;font-weight:600;font-size:14.5px}
+.acct .msg.err{color:#b00020}.acct .msg.ok{color:#0a7a2f}
+.acct .go{width:100%;height:52px;border:0;border-radius:12px;background:#ffc400;color:#111;font-weight:800;font-size:17px;cursor:pointer}
+.acct .go:disabled{opacity:.6}
+.acct .lnk2{background:none;border:0;color:#111;text-decoration:underline;font-weight:600;font-size:15px;padding:8px 0;cursor:pointer}
+.acct .hello{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.acct .av{width:48px;height:48px;border-radius:50%;background:#111;color:#ffc400;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex:none}
+.acct .badge2{display:inline-block;background:#e8f5ec;color:#0a7a2f;border-radius:20px;padding:3px 10px;font-weight:700;font-size:13px}
+.acct .badge2.wait{background:#fff4c2;color:#6b5300}
+.acct .orders{display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow:auto}
+.acct .ord{border:1.5px solid #e3e3e3;border-radius:12px;padding:10px 12px}
+.acct .ord b{font-size:15px}.acct .ord small{color:#666;display:block}
+.acct .st{float:right;font-weight:700;font-size:13px;border-radius:20px;padding:2px 9px;background:#eee}
+.acct .st.nuevo{background:#fff4c2}.acct .st.confirmado,.acct .st.listo{background:#e3efff}.acct .st.entregado{background:#e8f5ec}.acct .st.cancelado{background:#fde8e8}
+.acct .ord ul{margin:6px 0 0;padding-left:18px;font-size:14px;color:#333}
+.acct-note{display:flex;gap:12px;align-items:flex-start;background:#e8f5ec;border-radius:14px;padding:14px 16px;font-size:16px;margin:0 0 6px}
+.acct-note.warn{background:#fff4c2}
+.acct-note b{display:block;font-size:17px}
+.wa-btn{display:inline-flex;align-items:center;gap:8px;height:50px;padding:0 18px;border-radius:12px;background:#1fa855;color:#fff!important;font-weight:800;text-decoration:none}
+.gate{position:fixed;inset:0;z-index:250;background:#f6f3ec;display:flex;align-items:center;justify-content:center;padding:20px}
+.gate[hidden]{display:none}
+.gate .box{background:#fff;border-radius:18px;max-width:480px;width:100%;padding:26px 22px;box-shadow:0 10px 40px rgba(0,0,0,.12);text-align:center}
+.gate img{width:180px;height:auto}
+.gate h1{font-size:26px;margin:12px 0 6px}
+.gate p{color:#444;font-size:16px;margin:0 0 16px}
+.gate .go{width:100%;height:52px;border:0;border-radius:12px;background:#ffc400;font-weight:800;font-size:17px;cursor:pointer;margin-bottom:10px}
+.gate a{color:#111;font-weight:600}
