@@ -52,7 +52,7 @@ input,select,textarea{width:100%;height:48px;border:1.5px solid #ccc;border-radi
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {getFirestore,doc,getDoc,updateDoc,collection,query,orderBy,limit,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-const CFG=null;
+const CFG={"apiKey": "AIzaSyD9cadZeJCAz29qe_hhpx3fH6mZQU08DYU", "authDomain": "distribuidora-cym.firebaseapp.com", "projectId": "distribuidora-cym", "storageBucket": "distribuidora-cym.firebasestorage.app", "messagingSenderId": "321804284441", "appId": "1:321804284441:web:f2006ed7721c54e09d7088"};
 const app=initializeApp(CFG);const auth=getAuth(app);auth.languageCode='es';const db=getFirestore(app);
 const $=s=>document.querySelector(s);const A=$('#app');
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
