@@ -9,6 +9,9 @@ if(CFG){
 const app=initializeApp(CFG);
 const auth=getAuth(app);auth.languageCode='es';
 const db=getFirestore(app);
+/* --- cambios hechos por la tienda desde la administración --- */
+window.CYM_getFoto=async id=>{const s=await getDoc(doc(db,'fotos',String(id)));return s.exists()?s.data().img:null};
+getDocs(collection(db,'cambios')).then(qs=>{const c={};qs.forEach(d=>{c[d.id]=d.data()});if(Object.keys(c).length&&window.applyCambios)window.applyCambios(c)}).catch(()=>{});
 let user=null,perfil=null,pendingOrder=false,registering=false;
 const q=s=>document.querySelector(s);
 const escH=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -91,7 +94,8 @@ async function renderCuenta(){const ini=(first()[0]||'?').toUpperCase();
    <h2 style="font-size:20px;margin:14px 0 8px">Mis pedidos</h2><div class="orders" id="aorders"><p>Cargando…</p></div>
    <div style="display:flex;gap:10px;margin-top:16px"><button class="go" type="button" data-acx style="flex:1">Seguir comprando</button><button class="lnk2" type="button" data-out>Cerrar sesión</button></div>`;
   try{const s=await getDocs(query(collection(db,'pedidos'),where('uid','==',user.uid)));const L=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>((b.creado&&b.creado.seconds)||0)-((a.creado&&a.creado.seconds)||0)).slice(0,30);
-    const box=q('#aorders');if(!box)return;box.innerHTML=L.length?L.map(o=>`<div class="ord"><span class="st ${escH(o.estado)}">${escH(EST[o.estado]||o.estado)}</span><b>Pedido ${escH(o.num)}</b><small>${escH(o.fecha||'')} · ${o.unidades||0} unidades · ${o.entrega==='envio'?'Envío':'Retiro en el local'}</small><ul>${(o.items||[]).slice(0,6).map(x=>`<li>${x.q} × ${escH(x.n)}</li>`).join('')}${(o.items||[]).length>6?`<li>y ${(o.items.length-6)} más…</li>`:''}</ul></div>`).join(''):'<p>Todavía no tiene pedidos.</p>'}
+    const box=q('#aorders');if(!box)return;box.innerHTML=L.length?L.map(o=>`<div class="ord"><span class="st ${escH(o.estado)}">${escH(EST[o.estado]||o.estado)}</span><b>Pedido ${escH(o.num)}</b><small>${escH(o.fecha||'')} · ${o.unidades||0} unidades · ${o.entrega==='envio'?'Envío':'Retiro en el local'}</small><ul>${(o.items||[]).slice(0,6).map(x=>`<li>${x.q} × ${escH(x.n)}</li>`).join('')}${(o.items||[]).length>6?`<li>y ${(o.items.length-6)} más…</li>`:''}</ul>${(()=>{const t=(o.items||[]).reduce((a,x)=>a+(x.pr||0)*(x.q||0),0);return t?`<small>Total aproximado: ₡${(Math.round(t*100)/100).toLocaleString('es-CR',{maximumFractionDigits:2})}</small>`:''})()}<button class="lnk2" type="button" data-reo="${escH(o.id)}" style="margin-top:6px">Pedir de nuevo</button></div>`).join(''):'<p>Todavía no tiene pedidos.</p>';
+    box.onclick=e=>{const b=e.target.closest('[data-reo]');if(!b)return;const o=L.find(x=>x.id===b.dataset.reo);if(o&&window.reorderItems){const n=window.reorderItems(o.items||[]);b.textContent=n?'Agregado al carrito ✓':'Esos productos ya no están en el catálogo'}}}
   catch(e){const box=q('#aorders');if(box)box.innerHTML='<p>No se pudieron cargar sus pedidos. Revise su conexión.</p>'}}
 function renderEdit(){const p=perfil||{};body.innerHTML=`<h2 id="accth">Mis datos</h2><form id="af-edit" novalidate>
    <div class="f"><label for="e-nom">Nombre completo</label><input id="e-nom" value="${escH(p.nombre)}" autocomplete="name"></div>
@@ -108,7 +112,7 @@ window.submitOrder=async function(e){e.preventDefault();
   err('e-nombre',d.nombre?'':'Escriba su nombre.','f-nombre');err('e-tel',/\d{8}/.test(d.tel.replace(/\D/g,''))?'':'Escriba un teléfono de 8 dígitos.','f-tel');err('e-dir',d.entrega==='envio'&&!d.dir?'Escriba la dirección para el envío.':'','f-dir');
   if(firstBad){document.getElementById(firstBad).focus();return}
   const it=cartItems();if(!it.length)return;const now=new Date();const pad=n=>String(n).padStart(2,'0');
-  const o={num:`CM-${String(now.getFullYear()).slice(2)}${pad(now.getMonth()+1)}${pad(now.getDate())}-${Math.floor(Math.random()*9000)+1000}`,fecha:now.toLocaleString('es-CR'),d,items:it.map(({p,q})=>({id:p.id,n:p.t,c:p.c||'',m:p.m||'',q})),units:totals().units};
+  const o={num:`CM-${String(now.getFullYear()).slice(2)}${pad(now.getMonth()+1)}${pad(now.getDate())}-${Math.floor(Math.random()*9000)+1000}`,fecha:now.toLocaleString('es-CR'),d,items:it.map(({p,q})=>({id:p.id,n:p.t,c:p.nl?'':(p.c||''),m:p.m||'',q,pr:p.pr||0})),units:totals().units};
   const btn=document.getElementById('ckbtn');if(btn){btn.disabled=true;btn.textContent='Enviando pedido…'}
   try{await addDoc(collection(db,'pedidos'),{num:o.num,uid:user.uid,sitio:SITE,fecha:o.fecha,cliente:{nombre:d.nombre,tel:d.tel,correo:d.correo||user.email,negocio:d.emp||(perfil&&perfil.negocio)||''},entrega:d.entrega,dir:d.dir||'',notas:d.notas||'',vol:!!d.vol,items:o.items,unidades:o.units,estado:'nuevo',creado:serverTimestamp()});o.enviado=true}
   catch(er){o.enviado=false;o.error=errMsg(er)}
