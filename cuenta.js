@@ -141,5 +141,10 @@ function gateCheck(){if(SITE!=='mayoreo')return;if(!gate){document.body.insertAd
   gate.innerHTML=gateHTML('wait');gate.hidden=false}
 if(SITE==='mayoreo'){gateCheck()}
 
-onAuthStateChanged(auth,async u=>{user=u;if(u){if(registering)return;await loadPerfil();pendingOrder=false;ready()}else{perfil=null;updBtn();gateCheck()}});
+let editOn=false;
+async function isAdminU(u){try{return (await getDoc(doc(db,'admins',u.uid))).exists()}catch(e){return false}}
+onAuthStateChanged(auth,async u=>{user=u;if(u){if(registering)return;
+  if(await isAdminU(u)){perfil={nombre:'Administración',correo:u.email,mayoreo:true,admin:true};pendingOrder=false;ready();
+    if(!editOn){editOn=true;import('./editar.js').then(m=>m.init({db,auth})).catch(()=>{})}return}
+  await loadPerfil();pendingOrder=false;ready()}else{perfil=null;updBtn();gateCheck();if(editOn)location.reload()}});
 }
