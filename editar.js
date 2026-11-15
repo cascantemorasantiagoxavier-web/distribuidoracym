@@ -4,6 +4,7 @@ import {doc,getDoc,getDocs,setDoc,updateDoc,deleteDoc,deleteField,collection} fr
 export function init({db,auth}){
 const q=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const numCR=v=>{let s=String(v||'').replace(/[^\d.,]/g,'');if(!s)return NaN;const ld=Math.max(s.lastIndexOf('.'),s.lastIndexOf(','));if(ld>=0){const dec=s.slice(ld+1),int=s.slice(0,ld).replace(/[.,]/g,'');if(dec.length===3&&!/[.,]/.test(s.slice(0,ld))&&s[ld]==='.'&&int.length<=3)return parseFloat(int+dec);if(dec.length===3&&/[.,]/.test(s.slice(0,ld)))return parseFloat(int+dec);return parseFloat(int+'.'+dec)}return parseFloat(s)};
 const crc=n=>'₡'+(Math.round(n*100)/100).toLocaleString('es-CR',{maximumFractionDigits:2});
 let ON=false,CAMB={productos:{},tienda:{},fotos:{}};
 try{ON=/[?&]editar\b/.test(location.search)||sessionStorage.getItem('cym_editar')==='1'}catch(e){}
@@ -68,7 +69,8 @@ function openEditor(id){const p=window.CYM_prod&&window.CYM_prod(id);if(!p)retur
  ${hasF?'<button type="button" class="cymb2 w" id="cymdel">Quitar la foto que puse (vuelve la de antes)</button>':''}
  <label class="cyml" for="cymt">Nombre</label><input id="cymt" value="${esc(p.t)}">
  <label class="cyml" for="cymd">Descripción</label><textarea id="cymd" rows="4">${esc(p.d||'')}</textarea>
- <label class="cyml" for="cympr">Precio con IVA (₡)</label><input id="cympr" inputmode="decimal" value="${p.pr||''}">
+ <label class="cyml" for="cympr">Precio en la tienda, con IVA (₡)</label><input id="cympr" inputmode="decimal" value="${x.pr||o0.pr||''}">
+ <label class="cyml" for="cympm">Precio en mayoreo, con IVA (₡)</label><input id="cympm" inputmode="decimal" value="${x.pm||''}" placeholder="Vacío = el mismo de la tienda">
  <label class="cymchk"><input type="checkbox" id="cymo"${x.oculto?' checked':''}> Ocultar este producto (no sale en la tienda)</label>
  <button type="button" class="cymgo" id="cymsv">Guardar cambios</button><div class="cymmsg" id="cymmsg"></div>
  ${Object.keys(x).length?'<button type="button" class="cymb2" id="cymrs" style="width:100%">Dejar nombre, descripción y precio como estaban</button>':''}</div>`;
@@ -91,8 +93,8 @@ async function setMap(d,k,v){const r=doc(db,'cambios',d),del=v===null;try{await 
 async function save(o0){const p=P;if(!p)return;const b=q('#cymsv'),m=q('#cymmsg');b.disabled=true;m.style.color='#555';m.textContent='Guardando…';
  try{if(IM){const c=q('#cymcv');let k=.86,u=c.toDataURL('image/jpeg',k);while(u.length>950000&&k>.4){k-=.1;u=c.toDataURL('image/jpeg',k)}const v=Date.now();
    await setDoc(doc(db,'fotos',String(p.id)),{img:u,v,c:p.c||'',t:o0.t||'',por:auth.currentUser&&auth.currentUser.email||''});await setMap('fotos','p'+p.id,v);window.CYM_setFoto&&window.CYM_setFoto(p.id,u,v)}
-  const x={},t=q('#cymt').value.trim(),d=q('#cymd').value.trim(),pr=parseFloat(String(q('#cympr').value).replace(/[^\d.,]/g,'').replace(',','.'));
-  if(t&&t!==o0.t)x.t=t;if(d&&d!==(o0.d||''))x.d=d;if(pr>0&&Math.abs(pr-(o0.pr||0))>.004)x.pr=Math.round(pr*100)/100;if(q('#cymo').checked)x.oculto=true;
+  const x={},t=q('#cymt').value.trim(),d=q('#cymd').value.trim(),pr=numCR(q('#cympr').value);
+  if(t&&t!==o0.t)x.t=t;if(d&&d!==(o0.d||''))x.d=d;if(pr>0&&Math.abs(pr-(o0.pr||0))>.004)x.pr=Math.round(pr*100)/100;const pm=numCR(q('#cympm').value);if(pm>0)x.pm=Math.round(pm*100)/100;if(q('#cymo').checked)x.oculto=true;
   const had=Object.keys(CAMB.productos['p'+p.id]||{}).length;if(Object.keys(x).length){x.v=Date.now();await setMap('productos','p'+p.id,x)}else if(had)await setMap('productos','p'+p.id,null);
   close();await refresh();toast('Guardado ✓')}catch(er){b.disabled=false;msg(er&&er.code==='permission-denied'?'No tiene permiso para guardar.':'No se pudo guardar. Revise el internet e intente de nuevo.')}}
 }
