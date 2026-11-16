@@ -13,6 +13,9 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .cymed-bar{position:fixed;left:10px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:9000;display:flex;gap:8px;align-items:center;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .cymed-bar button{height:46px;border:0;border-radius:23px;padding:0 16px;font-weight:800;font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.28);background:#111;color:#fff}
 .cymed-bar #cymednew{background:#0a7a2f}
+.cymed-bar a{height:46px;border-radius:23px;padding:0 16px;font-weight:800;font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.28);background:#1F4E8C;color:#fff;display:inline-flex;align-items:center;text-decoration:none;white-space:nowrap}
+.cymed-bar [hidden]{display:none!important}
+.cymed-bar{flex-wrap:wrap;right:10px}
 .cymed-bar button.on{background:#F5B700;color:#111}
 .cymed-top{position:fixed;left:0;right:0;top:0;z-index:8999;background:#F5B700;color:#111;font:700 14px system-ui,sans-serif;text-align:center;padding:8px 10px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 body.cym-edit{padding-top:36px}
@@ -41,9 +44,9 @@ body.cym-edit [data-pid]{cursor:pointer}
 .cymed input[type=range]{width:100%;height:36px}
 .cymed-toast{position:fixed;left:12px;right:12px;bottom:20px;background:#0a7a2f;color:#fff;padding:14px;border-radius:12px;font:700 15px system-ui,sans-serif;z-index:9600;text-align:center}
 </style>`);
-document.body.insertAdjacentHTML('beforeend','<div class="cymed-bar cymed-ui"><button type="button" id="cymedbtn"></button><button type="button" id="cymednew" hidden>➕ Producto nuevo</button></div><div class="cymed-top cymed-ui" id="cymedtop" hidden>✏️ Modo editar: toque un producto para cambiarlo</div>');
+document.body.insertAdjacentHTML('beforeend','<div class="cymed-bar cymed-ui"><button type="button" id="cymedbtn"></button><button type="button" id="cymednew" hidden>➕ Producto nuevo</button>'+(/\/catalogo\//.test(location.pathname)?'':'<a id="cymedcat" href="catalogo/" hidden>📖 Catálogo PDF</a>')+'</div><div class="cymed-top cymed-ui" id="cymedtop" hidden>✏️ Modo editar: toque un producto para cambiarlo</div>');
 const btn=q('#cymedbtn');
-function setOn(v){ON=v;try{sessionStorage.setItem('cym_editar',v?'1':'0')}catch(e){}document.body.classList.toggle('cym-edit',v);q('#cymedtop').hidden=!v;btn.classList.toggle('on',v);q('#cymednew').hidden=!v;btn.textContent=v?'✓ Terminar de editar':'✏️ Editar página'}
+function setOn(v){ON=v;try{sessionStorage.setItem('cym_editar',v?'1':'0')}catch(e){}document.body.classList.toggle('cym-edit',v);q('#cymedtop').hidden=!v;btn.classList.toggle('on',v);q('#cymednew').hidden=!v;if(q('#cymedcat'))q('#cymedcat').hidden=!v;btn.textContent=v?'✓ Terminar de editar':'✏️ Editar página'}
 btn.onclick=()=>setOn(!ON);setOn(ON);q('#cymednew').onclick=()=>openEditor(0);
 
 async function loadCamb(){try{const s=await getDocs(collection(db,'cambios'));const c={productos:{},tienda:{},fotos:{},nuevos:{},secciones:{}};s.forEach(d=>{c[d.id]=d.data()});CAMB=c;return c}catch(e){return CAMB}}
@@ -60,7 +63,7 @@ document.addEventListener('click',e=>{if(!ON||e.target.closest('.cymed-ui,.cymed
 let P=null,IM=null,R=0,Z=1,OX=0,OY=0;
 function draw(){const c=q('#cymcv');if(!c)return;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,800,800);if(!IM)return;const w=IM.width,h=IM.height,rw=R%2?h:w,rh=R%2?w:h,s=Math.min(760/rw,760/rh)*Z;x.save();x.translate(400+OX,400+OY);x.rotate(R*Math.PI/2);x.scale(s,s);x.drawImage(IM,-w/2,-h/2);x.restore()}
 async function loadFile(f){if(!f)return;const url=URL.createObjectURL(f);try{const im=new Image();im.src=url;await im.decode();const k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);IM=c;R=0;Z=1;OX=OY=0;q('#cymz').value=1;q('#cymcv').hidden=false;q('#cymnow').hidden=true;q('#cymctl').hidden=false;draw()}catch(er){toast('No se pudo abrir esa foto. Pruebe con otra.',1)}finally{URL.revokeObjectURL(url)}}
-function nowStyle(p){const sp=[...document.querySelectorAll(`[data-pid="${p.id}"]`)].find(e=>getComputedStyle(e).backgroundImage!=='none');if(!sp)return '';const cs=getComputedStyle(sp);return `background-image:${cs.backgroundImage};background-size:${cs.backgroundSize};background-position:${cs.backgroundPosition};background-repeat:no-repeat`.replace(/"/g,"'")}
+function nowStyle(p){const sp=[...document.querySelectorAll(`[data-pid="${p.id}"]`)].find(e=>getComputedStyle(e).backgroundImage!=='none');if(!sp){const im=document.querySelector(`[data-pid="${p.id}"] img, article[data-pid] [data-pid="${p.id}"]`)||null;const ii=im&&(im.tagName==='IMG'?im:im.closest('article')&&im.closest('article').querySelector('img'));return ii?`background-image:url("${ii.src}");background-size:contain;background-position:center;background-repeat:no-repeat`:''}const cs=getComputedStyle(sp);return `background-image:${cs.backgroundImage};background-size:${cs.backgroundSize};background-position:${cs.backgroundPosition};background-repeat:no-repeat`.replace(/"/g,"'")}
 function catSelect(sel){const cs=(window.CYM_cats?window.CYM_cats():[]);return `<select id="cymk" class="cymsel">${cs.map(c=>`<option value="${esc(c.k)}"${c.k===sel?' selected':''}>${esc(c.label)}</option>`).join('')}<option value="__nueva">➕ Nueva sección…</option></select>`}
 function openEditor(id){const p=id?(window.CYM_prod&&window.CYM_prod(id)):{id:0,t:'',d:'',pr:0,c:'',m:'',b:'',k:(window.CYM_catActual&&window.CYM_catActual())||'',_nuevo:1};if(!p)return;P=p;IM=null;R=0;Z=1;OX=OY=0;
  const nuevo=!!p._nuevo,xn=nuevo&&id?(CAMB.nuevos['p'+id]||{}):{};
