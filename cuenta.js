@@ -71,7 +71,11 @@ let SIS=null,sisT=0;
 async function buscarCed(){const i=q('#r-ced'),m=q('#r-cedmsg');if(!i||!m)return;const c=cedN(i.value);const my=++sisT;SIS=null;m.className='cedmsg';
   if(c.length<9){m.textContent='';return}
   m.textContent='Buscando…';try{const h=await sha('cym-'+c);const d=await getDoc(doc(db,'sistema',h));if(my!==sisT)return;
-    if(d.exists()){const x=d.data();SIS={sh:h,codigo:String(x.cod||''),nombre:String(x.n||'')};m.className='cedmsg ok';m.textContent='✓ Usted es cliente Nº '+SIS.codigo+(SIS.nombre?' — '+SIS.nombre:'')+'. Sus pedidos le llegan a la tienda a su nombre.'+(x.m?' Correo que tenemos: '+x.m:'');
+    if(d.exists()){const x=d.data();const ops=[[String(x.cod||''),String(x.n||'')]].concat((Array.isArray(x.o)?x.o:[]).map(v=>{const i=String(v).indexOf('|');return [String(v).slice(0,i),String(v).slice(i+1)]}));
+      SIS={sh:h,codigo:ops[0][0],nombre:ops[0][1]};m.className='cedmsg ok';
+      if(ops.length>1){m.innerHTML='✓ Usted es cliente de la tienda. Escoja cuál es su cuenta:'+ops.map((o,i)=>`<label class="cedop"><input type="radio" name="cedop" value="${i}"${i?'':' checked'}> Nº ${escH(o[0])} — ${escH(o[1])}</label>`).join('');
+        m.querySelectorAll('input[name=cedop]').forEach(r=>r.addEventListener('change',()=>{const o=ops[+r.value];SIS.codigo=o[0];SIS.nombre=o[1]}))}
+      else m.textContent='✓ Usted es cliente Nº '+SIS.codigo+(SIS.nombre?' — '+SIS.nombre:'')+'. Sus pedidos le llegan a la tienda a su nombre.'+(x.m?' Correo que tenemos: '+x.m:'');
       const n=q('#r-nom');if(n&&!n.value.trim()&&SIS.nombre)n.value=SIS.nombre}
     else{m.className='cedmsg';m.textContent='No la encontramos en la lista de clientes. Igual puede crear su cuenta.'}}catch(er){if(my===sisT)m.textContent=''}}
 let cedTm;body.addEventListener('input',e=>{if(e.target.id==='r-ced'){clearTimeout(cedTm);cedTm=setTimeout(buscarCed,450)}});

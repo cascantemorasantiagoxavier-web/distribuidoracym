@@ -52,3 +52,4 @@
 .acct .cedmsg.ok{color:#0a7a2f;font-weight:700}
 .acct .f.ced{background:#fff8dc;border-radius:12px;padding:10px 12px}
 .acct .sub2{font-size:14px;color:#555;margin:12px 0 0;text-align:center}
+.acct .cedop{display:flex;gap:8px;align-items:center;font-weight:600;color:#111;margin-top:8px;font-size:15px}.acct .cedop input{width:22px;height:22px}
