@@ -40,9 +40,9 @@ function render(v,note){
    <form id="af-login" novalidate><div class="f"><label for="a-mail">Correo</label><input id="a-mail" type="email" autocomplete="email" required></div>
    <div class="f"><label for="a-pw">Contraseña</label>${pw('a-pw','current-password')}</div>
    <div class="msg" id="amsg" role="status"></div><button class="go" type="submit">Ingresar</button></form>
-   <button class="lnk2" type="button" data-view="olvido">¿Olvidó su contraseña?</button>`;
+   <button class="lnk2" type="button" data-view="olvido">¿Olvidó su contraseña?</button><p class="sub2">¿Ya es cliente de la ferretería y es su primera vez en la página? Toque <b>Crear cuenta</b> y ponga su cédula.</p>`;
   else if(v==='registro')body.innerHTML=`<h2 id="accth">Crear cuenta</h2>${note?`<p class="sub">${escH(note)}</p>`:'<p class="sub">Es gratis. Usted mismo crea su contraseña.</p>'}${tabs(v)}
-   <form id="af-reg" novalidate><div class="f"><label for="r-nom">Nombre completo</label><input id="r-nom" autocomplete="name" required></div>
+   <form id="af-reg" novalidate><div class="f ced"><label for="r-ced">¿Ya es cliente de la ferretería? Ponga su cédula</label><input id="r-ced" inputmode="numeric" autocomplete="off" placeholder="Ej. 1-0234-0567 (opcional)"><div class="cedmsg" id="r-cedmsg" role="status"></div></div><div class="f"><label for="r-nom">Nombre completo</label><input id="r-nom" autocomplete="name" required></div>
    <div class="f"><label for="r-tel">Teléfono (WhatsApp)</label><input id="r-tel" type="tel" inputmode="tel" autocomplete="tel" required></div>
    <div class="f"><label for="r-mail">Correo</label><input id="r-mail" type="email" autocomplete="email" required></div>
    <div class="f"><label for="r-pw">Contraseña (mínimo 6)</label>${pw('r-pw','new-password')}</div>
@@ -64,13 +64,24 @@ body.addEventListener('change',e=>{if(e.target.id==='r-neg')q('#r-negbox').hidde
 const say=(t,ok)=>{const m=q('#amsg');if(m){m.textContent=t;m.className='msg '+(ok?'ok':'err')}};
 const busy=(f,on,t)=>{const b=f.querySelector('.go');if(b){b.disabled=on;if(t)b.textContent=t}};
 
+/* --- clientes que ya están en el sistema de la tienda (ApliTeam): se reconocen por la cédula --- */
+const cedN=v=>{let t=String(v||'').trim();const p=t.split(/[-\s]+/).filter(Boolean);if(p.length===3&&p[0].length===1){p[1]=p[1].padStart(4,'0');p[2]=p[2].padStart(4,'0');t=p.join('')}return t.replace(/\D/g,'')};
+const sha=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+let SIS=null,sisT=0;
+async function buscarCed(){const i=q('#r-ced'),m=q('#r-cedmsg');if(!i||!m)return;const c=cedN(i.value);const my=++sisT;SIS=null;m.className='cedmsg';
+  if(c.length<9){m.textContent='';return}
+  m.textContent='Buscando…';try{const h=await sha('cym-'+c);const d=await getDoc(doc(db,'sistema',h));if(my!==sisT)return;
+    if(d.exists()){const x=d.data();SIS={sh:h,codigo:String(x.cod||''),nombre:String(x.n||'')};m.className='cedmsg ok';m.textContent='✓ Usted es cliente Nº '+SIS.codigo+(SIS.nombre?' — '+SIS.nombre:'')+'. Sus pedidos le llegan a la tienda a su nombre.'+(x.m?' Correo que tenemos: '+x.m:'');
+      const n=q('#r-nom');if(n&&!n.value.trim()&&SIS.nombre)n.value=SIS.nombre}
+    else{m.className='cedmsg';m.textContent='No la encontramos en la lista de clientes. Igual puede crear su cuenta.'}}catch(er){if(my===sisT)m.textContent=''}}
+let cedTm;body.addEventListener('input',e=>{if(e.target.id==='r-ced'){clearTimeout(cedTm);cedTm=setTimeout(buscarCed,450)}});
 body.addEventListener('submit',async e=>{e.preventDefault();const f=e.target;
   if(f.id==='af-login'){const mail=q('#a-mail').value.trim(),p=q('#a-pw').value;if(!mail||!p)return say('Escriba su correo y su contraseña.');
     busy(f,true,'Ingresando…');try{await signInWithEmailAndPassword(auth,mail,p);afterLogin()}catch(er){say(errMsg(er));busy(f,false,'Ingresar')}}
   if(f.id==='af-reg'){const d={nombre:q('#r-nom').value.trim(),tel:q('#r-tel').value.trim(),correo:q('#r-mail').value.trim(),negocio:q('#r-neg').checked?q('#r-emp').value.trim():'',dir:q('#r-dir').value.trim()};const p=q('#r-pw').value;
     if(!d.nombre)return say('Escriba su nombre.');if(tel8(d.tel).length<8)return say('Escriba un teléfono de 8 dígitos.');if(!/^\S+@\S+\.\S+$/.test(d.correo))return say('Escriba un correo válido.');if(p.length<6)return say('La contraseña debe tener al menos 6 caracteres.');
     busy(f,true,'Creando cuenta…');registering=true;try{const c=await createUserWithEmailAndPassword(auth,d.correo,p);await updateProfile(c.user,{displayName:d.nombre});
-      perfil={...d,mayoreo:false,solicitaMayoreo:q('#r-neg').checked,sitio:SITE,creado:serverTimestamp()};await setDoc(doc(db,'clientes',c.user.uid),perfil);registering=false;afterLogin(true);ready()}catch(er){registering=false;say(errMsg(er));busy(f,false,'Crear cuenta')}}
+      perfil={...d,mayoreo:false,solicitaMayoreo:q('#r-neg').checked,sitio:SITE,creado:serverTimestamp()};if(SIS&&SIS.codigo){perfil.codigo=SIS.codigo;perfil.sh=SIS.sh}await setDoc(doc(db,'clientes',c.user.uid),perfil);registering=false;afterLogin(true);ready()}catch(er){registering=false;say(errMsg(er));busy(f,false,'Crear cuenta')}}
   if(f.id==='af-olv'){const mail=q('#o-mail').value.trim();if(!mail)return say('Escriba su correo.');busy(f,true,'Enviando…');
     try{await sendPasswordResetEmail(auth,mail);say('Listo. Revise su correo (también la carpeta de spam).',true)}catch(er){say(errMsg(er))}busy(f,false,'Enviar correo')}
   if(f.id==='af-edit'){const d={nombre:q('#e-nom').value.trim(),tel:q('#e-tel').value.trim(),negocio:q('#e-emp').value.trim(),dir:q('#e-dir').value.trim()};
@@ -114,7 +125,7 @@ window.submitOrder=async function(e){e.preventDefault();
   const it=cartItems();if(!it.length)return;const now=new Date();const pad=n=>String(n).padStart(2,'0');
   const o={num:`CM-${String(now.getFullYear()).slice(2)}${pad(now.getMonth()+1)}${pad(now.getDate())}-${Math.floor(Math.random()*9000)+1000}`,fecha:now.toLocaleString('es-CR'),d,items:it.map(({p,q})=>({id:p.id,n:p.t,c:p.nl?'':(p.c||''),m:p.m||'',q,pr:p.pr||0})),units:totals().units};
   const btn=document.getElementById('ckbtn');if(btn){btn.disabled=true;btn.textContent='Enviando pedido…'}
-  try{await addDoc(collection(db,'pedidos'),{num:o.num,uid:user.uid,sitio:SITE,fecha:o.fecha,cliente:{nombre:d.nombre,tel:d.tel,correo:d.correo||user.email,negocio:d.emp||(perfil&&perfil.negocio)||''},entrega:d.entrega,dir:d.dir||'',notas:d.notas||'',vol:!!d.vol,items:o.items,unidades:o.units,estado:'nuevo',creado:serverTimestamp()});o.enviado=true}
+  try{await addDoc(collection(db,'pedidos'),{num:o.num,uid:user.uid,sitio:SITE,fecha:o.fecha,cliente:{nombre:d.nombre,tel:d.tel,correo:d.correo||user.email,negocio:d.emp||(perfil&&perfil.negocio)||'',codigo:(perfil&&perfil.codigo)||''},entrega:d.entrega,dir:d.dir||'',notas:d.notas||'',vol:!!d.vol,items:o.items,unidades:o.units,estado:'nuevo',creado:serverTimestamp()});o.enviado=true}
   catch(er){o.enviado=false;o.error=errMsg(er)}
   if(!o.enviado&&btn){btn.disabled=false;btn.textContent='Confirmar pedido';const m=document.getElementById('e-tel');alertBox('No se pudo enviar el pedido: '+(o.error||'')+' Revise su conexión e intente de nuevo.');return}
   store.set('cym_last_order',o);draft={...d,notas:''};store.set('cym_draft',draft);cart={};saveCart();

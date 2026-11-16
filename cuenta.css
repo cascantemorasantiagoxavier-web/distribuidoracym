@@ -47,3 +47,8 @@
 .gate p{color:#444;font-size:16px;margin:0 0 16px}
 .gate .go{width:100%;height:52px;border:0;border-radius:12px;background:#ffc400;font-weight:800;font-size:17px;cursor:pointer;margin-bottom:10px}
 .gate a{color:#111;font-weight:600}
+/* cliente del sistema por cédula */
+.acct .cedmsg{font-size:14px;margin-top:6px;color:#555;min-height:0}
+.acct .cedmsg.ok{color:#0a7a2f;font-weight:700}
+.acct .f.ced{background:#fff8dc;border-radius:12px;padding:10px 12px}
+.acct .sub2{font-size:14px;color:#555;margin:12px 0 0;text-align:center}
