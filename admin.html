@@ -69,7 +69,7 @@ textarea{height:auto;padding:10px 12px}
 .ctog{display:flex;gap:6px;margin:0 0 10px;background:#eee;border-radius:12px;padding:4px}.ctog button{flex:1;min-height:44px;padding:0 4px;border:0;border-radius:9px;background:transparent;font-weight:700;font-size:14px}.ctog button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .pill.ok{background:#e3f6e8;color:#0a7a2f}.pill.gray{background:#eee;color:#555}
 </style>
-<script>(function(){var V='20261115221734';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261116083548';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 </head>
 <body>
 <header><img src="logo.webp" alt="C y M"><h1>Administración</h1><button id="out" hidden>Salir</button></header>
@@ -107,7 +107,7 @@ function render(){const cnt=k=>ords.filter(o=>k==='todos'||(k==='proceso'?['conf
  let h=`<div class="tabs">${T.map(([k,l])=>`<button data-t="${k}" class="${tab===k?'on':''}">${l}${k==='clientes'?(clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length?`<span class="n">${clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length}</span>`:''):(cnt(k)&&k!=='todos'&&k!=='entregado'?`<span class="n">${cnt(k)}</span>`:'')}</button>`).join('')}</div>`;
  if(tab==='productos'||tab==='tienda'){const ex=$('#edwrap');if(ex&&ex.dataset.t===tab){const tb=A.querySelector('.tabs');if(tb)tb.outerHTML=h;return}A.innerHTML=h+(tab==='productos'?prodPanel():tiendaPanel());if(tab==='productos')prodInit();else tiendaInit();return}
  if(tab==='clientes'&&cliv==='sis'){h+=sisPanel()}
- else if(tab==='clientes'&&cliv==='con'){h+=conPanel()}
+
  else if(tab==='clientes'){const L=clis.filter(c=>!filtro||JSON.stringify(c).toLowerCase().includes(filtro));
   h+=cliToggle()+`<input class="search" id="fs" placeholder="Buscar cliente por nombre, teléfono o correo" value="${esc(filtro)}"><div class="list">${L.length?L.map(c=>`<div class="cli"><div><b>${esc(c.nombre||'(sin nombre)')}</b> ${c.codigo?`<span class="pill ok">Cliente ApliTeam Nº ${esc(c.codigo)}</span>`:''} ${c.solicitaMayoreo&&!c.mayoreo?'<span class="pill">Pide mayoreo</span>':''}<br><small>${esc(c.tel||'')} · ${esc(c.correo||'')}${c.negocio?' · '+esc(c.negocio):''}</small>${c.dir?`<br><small>${esc(c.dir)}</small>`:''}</div>
    <div style="display:flex;gap:8px;align-items:center">${wa(c.tel)?`<a class="wa" style="height:40px;display:inline-flex;align-items:center;border-radius:10px;padding:0 10px;background:#1fa855;color:#fff;font-weight:700;text-decoration:none" href="${wa(c.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}<label class="sw"><input type="checkbox" data-may="${c.id}"${c.mayoreo?' checked':''}>Mayoreo</label></div></div>`).join(''):'<div class="empty">No hay clientes todavía.</div>'}</div>`}
@@ -135,7 +135,7 @@ function sprTh(p,big){const cl='th'+(big?' big':'');if(CAMB.fotos['p'+p.id])retu
 async function fillThumbs(root){for(const el of root.querySelectorAll('[data-fth]')){const id=el.dataset.fth;if(!FC[id]){try{const s=await getDoc(doc(db,'fotos',String(id)));if(s.exists())FC[id]=s.data().img}catch(e){}}if(FC[id]){el.style.backgroundImage=`url(${FC[id]})`;el.style.backgroundSize='contain'}}}
 /* ===== Clientes de ApliTeam (los que pueden activar su cuenta con la cédula) ===== */
 let cliv='web',SISL=null,sisCargando=false;
-function cliToggle(){const n=SISL?SISL.length:'',m=CONL?CONL.length:'';return `<div class="ctog"><button type="button" data-cliv="web" class="${cliv==='web'?'on':''}">Con cuenta en la página (${clis.length})</button><button type="button" data-cliv="sis" class="${cliv==='sis'?'on':''}">Clientes de ApliTeam${n?' ('+n+')':''}</button><button type="button" data-cliv="con" class="${cliv==='con'?'on':''}">De contado${m?' ('+m+')':''}</button></div>`}
+function cliToggle(){const n=SISL?SISL.length:'',m=CONL?CONL.length:'';return `<div class="ctog"><button type="button" data-cliv="web" class="${cliv==='web'?'on':''}">Con cuenta en la página (${clis.length})</button><button type="button" data-cliv="sis" class="${cliv==='sis'?'on':''}">Clientes de ApliTeam${n?' ('+n+')':''}</button></div>`}
 let CONL=null,conCargando=false;
 async function cargarCon(){if(CONL||conCargando)return;conCargando=true;try{const t=await getDoc(doc(db,'sistema_lista','contado'));CONL=t.exists()&&Array.isArray(t.data().l)?t.data().l.map(x=>({n:String(x.n||''),f:+x.f||0,u:String(x.u||''),t:String(x.t||'')})):[]}catch(er){CONL=[];alertMsg('No se pudo cargar la lista de clientes de contado.')}conCargando=false;if(tab==='clientes'&&cliv==='con')render()}
 const nN=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/\s+/g,' ').trim();
