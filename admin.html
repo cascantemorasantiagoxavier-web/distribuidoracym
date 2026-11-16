@@ -66,8 +66,10 @@ input,select,textarea{width:100%;height:48px;border:1.5px solid #ccc;border-radi
 .btn2.warn{background:#fde2e2;width:100%;margin-bottom:6px}
 #fz{height:36px;padding:0;border:0}.chk{display:flex;gap:10px;align-items:center;font-weight:700;margin-top:14px}.chk input{width:24px;height:24px}
 textarea{height:auto;padding:10px 12px}
+.ctog{display:flex;gap:6px;margin:0 0 10px;background:#eee;border-radius:12px;padding:4px}.ctog button{flex:1;min-height:44px;border:0;border-radius:9px;background:transparent;font-weight:700;font-size:14px}.ctog button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.pill.ok{background:#e3f6e8;color:#0a7a2f}.pill.gray{background:#eee;color:#555}
 </style>
-<script>(function(){var V='20261115214506';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261115215446';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 </head>
 <body>
 <header><img src="logo.webp" alt="C y M"><h1>Administración</h1><button id="out" hidden>Salir</button></header>
@@ -75,7 +77,7 @@ textarea{height:auto;padding:10px 12px}
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {getFirestore,doc,getDoc,updateDoc,setDoc,deleteDoc,deleteField,collection,query,orderBy,limit,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {getFirestore,doc,getDoc,getDocs,updateDoc,setDoc,deleteDoc,deleteField,collection,query,orderBy,limit,onSnapshot} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const CFG={"apiKey": "AIzaSyD9cadZeJCAz29qe_hhpx3fH6mZQU08DYU", "authDomain": "distribuidora-cym.firebaseapp.com", "projectId": "distribuidora-cym", "storageBucket": "distribuidora-cym.firebasestorage.app", "messagingSenderId": "321804284441", "appId": "1:321804284441:web:f2006ed7721c54e09d7088"};
 const app=initializeApp(CFG);const auth=getAuth(app);auth.languageCode='es';const db=getFirestore(app);
 const $=s=>document.querySelector(s);const A=$('#app');
@@ -104,8 +106,9 @@ function render(){const cnt=k=>ords.filter(o=>k==='todos'||(k==='proceso'?['conf
  const T=[['nuevo','Nuevos'],['proceso','En proceso'],['entregado','Entregados'],['todos','Todos'],['clientes','Clientes'],['productos','Editar productos'],['tienda','Datos de la tienda']];
  let h=`<div class="tabs">${T.map(([k,l])=>`<button data-t="${k}" class="${tab===k?'on':''}">${l}${k==='clientes'?(clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length?`<span class="n">${clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length}</span>`:''):(cnt(k)&&k!=='todos'&&k!=='entregado'?`<span class="n">${cnt(k)}</span>`:'')}</button>`).join('')}</div>`;
  if(tab==='productos'||tab==='tienda'){const ex=$('#edwrap');if(ex&&ex.dataset.t===tab){const tb=A.querySelector('.tabs');if(tb)tb.outerHTML=h;return}A.innerHTML=h+(tab==='productos'?prodPanel():tiendaPanel());if(tab==='productos')prodInit();else tiendaInit();return}
- if(tab==='clientes'){const L=clis.filter(c=>!filtro||JSON.stringify(c).toLowerCase().includes(filtro));
-  h+=`<input class="search" id="fs" placeholder="Buscar cliente por nombre, teléfono o correo" value="${esc(filtro)}"><div class="list">${L.length?L.map(c=>`<div class="cli"><div><b>${esc(c.nombre||'(sin nombre)')}</b> ${c.solicitaMayoreo&&!c.mayoreo?'<span class="pill">Pide mayoreo</span>':''}<br><small>${esc(c.tel||'')} · ${esc(c.correo||'')}${c.negocio?' · '+esc(c.negocio):''}</small>${c.dir?`<br><small>${esc(c.dir)}</small>`:''}</div>
+ if(tab==='clientes'&&cliv==='sis'){h+=sisPanel()}
+ else if(tab==='clientes'){const L=clis.filter(c=>!filtro||JSON.stringify(c).toLowerCase().includes(filtro));
+  h+=cliToggle()+`<input class="search" id="fs" placeholder="Buscar cliente por nombre, teléfono o correo" value="${esc(filtro)}"><div class="list">${L.length?L.map(c=>`<div class="cli"><div><b>${esc(c.nombre||'(sin nombre)')}</b> ${c.codigo?`<span class="pill ok">Cliente ApliTeam Nº ${esc(c.codigo)}</span>`:''} ${c.solicitaMayoreo&&!c.mayoreo?'<span class="pill">Pide mayoreo</span>':''}<br><small>${esc(c.tel||'')} · ${esc(c.correo||'')}${c.negocio?' · '+esc(c.negocio):''}</small>${c.dir?`<br><small>${esc(c.dir)}</small>`:''}</div>
    <div style="display:flex;gap:8px;align-items:center">${wa(c.tel)?`<a class="wa" style="height:40px;display:inline-flex;align-items:center;border-radius:10px;padding:0 10px;background:#1fa855;color:#fff;font-weight:700;text-decoration:none" href="${wa(c.tel)}" target="_blank" rel="noopener">WhatsApp</a>`:''}<label class="sw"><input type="checkbox" data-may="${c.id}"${c.mayoreo?' checked':''}>Mayoreo</label></div></div>`).join(''):'<div class="empty">No hay clientes todavía.</div>'}</div>`}
  else{const hoy=new Date();const H=ords.filter(o=>sameDay(oDate(o),hoy)&&o.estado!=='cancelado');const pend=ords.filter(o=>['nuevo','confirmado','listo'].includes(o.estado));
   h+=`<div class="sum"><div><small>Pedidos hoy</small><b>${H.length}</b></div><div><small>Monto de hoy (aprox.)</small><b>${crc(H.reduce((a,o)=>a+oTot(o),0))}</b></div><div><small>Pendientes</small><b>${pend.length}</b></div><div><small>Monto pendiente (aprox.)</small><b>${crc(pend.reduce((a,o)=>a+oTot(o),0))}</b></div></div>`;
@@ -129,6 +132,17 @@ const edOf=id=>CAMB.productos['p'+id]||{};
 const tOf=p=>edOf(p.id).t||p.t;
 function sprTh(p,big){const cl='th'+(big?' big':'');if(CAMB.fotos['p'+p.id])return `<span class="${cl}" data-fth="${p.id}"${FC[p.id]?` style="background-image:url(${FC[p.id]});background-size:contain"`:''}></span>`;if(!p.i)return `<span class="${cl} none">Sin foto</span>`;const [s,j]=p.i.split('.').map(Number);return `<span class="${cl}" style="background-image:url(sp/${String(s).padStart(2,'0')}.webp);background-size:600% 600%;background-position:${(j%6)*20}% ${Math.floor(j/6)*20}%"></span>`}
 async function fillThumbs(root){for(const el of root.querySelectorAll('[data-fth]')){const id=el.dataset.fth;if(!FC[id]){try{const s=await getDoc(doc(db,'fotos',String(id)));if(s.exists())FC[id]=s.data().img}catch(e){}}if(FC[id]){el.style.backgroundImage=`url(${FC[id]})`;el.style.backgroundSize='contain'}}}
+/* ===== Clientes de ApliTeam (los que pueden activar su cuenta con la cédula) ===== */
+let cliv='web',SISL=null,sisCargando=false;
+function cliToggle(){const n=SISL?SISL.length:'';return `<div class="ctog"><button type="button" data-cliv="web" class="${cliv==='web'?'on':''}">Con cuenta en la página (${clis.length})</button><button type="button" data-cliv="sis" class="${cliv==='sis'?'on':''}">Clientes de ApliTeam${n?' ('+n+')':''}</button></div>`}
+async function cargarSis(){if(SISL||sisCargando)return;sisCargando=true;try{const s=await getDocs(collection(db,'sistema'));SISL=s.docs.map(d=>({cod:String(d.data().cod||'').trim(),n:String(d.data().n||''),m:String(d.data().m||'')})).sort((a,b)=>a.n.localeCompare(b.n,'es'))}catch(er){SISL=[];alertMsg('No se pudo cargar la lista de clientes de ApliTeam.')}sisCargando=false;if(tab==='clientes'&&cliv==='sis')render()}
+function sisPanel(){if(!SISL){cargarSis();return cliToggle()+'<div class="empty">Cargando clientes de ApliTeam…</div>'}
+ const web=new Map(clis.filter(c=>c.codigo).map(c=>[String(c.codigo).trim(),c]));const act=SISL.filter(x=>web.has(x.cod)).length;
+ const L=SISL.filter(x=>!filtro||(x.n+' '+x.cod+' '+x.m).toLowerCase().includes(filtro));
+ return cliToggle()+`<p class="hint">Estos son sus clientes de ApliTeam. Cada uno puede entrar a la página con <b>Crear cuenta</b> poniendo su cédula. Ya activaron su cuenta: <b>${act}</b> de ${SISL.length}.</p>
+  <input class="search" id="fs" placeholder="Buscar por nombre o código" value="${esc(filtro)}"><div class="list">${L.map(x=>{const c=web.get(x.cod);return `<div class="cli"><div><b>${esc(x.n||'(sin nombre)')}</b> <small>Cód. ${esc(x.cod)}</small><br><small>${c?'✓ Ya tiene cuenta en la página'+(c.tel?' · '+esc(c.tel):'')+(c.correo?' · '+esc(c.correo):''):'Todavía no activa su cuenta'+(x.m?' · correo en ApliTeam: '+esc(x.m):'')}</small></div>
+   <div>${c?`<label class="sw"><input type="checkbox" data-may="${c.id}"${c.mayoreo?' checked':''}>Mayoreo</label>`:'<span class="pill gray">Sin cuenta</span>'}</div></div>`}).join('')||'<div class="empty">No hay clientes con ese nombre.</div>'}</div>`}
+A.addEventListener('click',e=>{const b=e.target.closest('[data-cliv]');if(b){cliv=b.dataset.cliv;filtro='';render()}});
 function prodPanel(){return `<div id="edwrap" data-t="productos"><div class="openb"><a class="go2" href="index.html?editar">✏️ Editar la tienda</a><a class="go2 dk" href="mayoreo.html?editar">✏️ Editar mayoreo</a></div><p class="hint">Toque un botón de arriba: se abre la página como la ven los clientes y usted toca cualquier producto para cambiarlo. O aquí abajo también puede buscarlo por nombre. Busque el producto y tóquelo para cambiarle la <b>foto</b>, el <b>nombre</b>, la <b>descripción</b> o el <b>precio</b>, o para ocultarlo. Los cambios salen en la tienda y en la de mayoreo.</p>
  <input class="search" id="pq" placeholder="Buscar por nombre, código o modelo" value="${esc(pq)}" autocomplete="off"><div id="pres" class="plist"></div></div>`}
 function prodRow(p){const x=edOf(p.id),tags=[CAMB.fotos['p'+p.id]?'Foto nueva':'',x.t||x.d?'Texto cambiado':'',x.pr||x.pm?'Precio cambiado':'',x.oculto?'Oculto':''].filter(Boolean);
