@@ -877,7 +877,7 @@ body.chatopen .chatfab{display:none}
 @media (max-width:760px){.tabbar{grid-template-columns:repeat(5,1fr)}.tabbar a,.tabbar button{font-size:11.5px}}
 @media print{.chat,.chatfab,.hback{display:none!important}}
 </style>
-<script>(function(){var V='20261116083548';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261116133406';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 <link rel="stylesheet" href="cuenta.css">
 </head>
 <body>
@@ -972,7 +972,7 @@ let favs=store.get('cym_favs',[]).filter(id=>BY.has(id));
 function favBtn(id,full){const on=favs.includes(id);return `<button class="${full?'pbtn':'favb'}" type="button" data-fav="${id}" aria-pressed="${on}" aria-label="${on?'Quitar de guardados':'Guardar'}">${ic('heart')}${full?`<span>${on?'Guardado':'Guardar'}</span>`:''}</button>`}
 function toggleFav(id){favs=favs.includes(id)?favs.filter(x=>x!==id):[id,...favs];store.set('cym_favs',favs);const on=favs.includes(id);document.querySelectorAll(`[data-fav="${id}"]`).forEach(b=>{b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',on?'Quitar de guardados':'Guardar');const sp=b.querySelector('span');if(sp)sp.textContent=on?'Guardado':'Guardar'});const fl=document.getElementById('favlink');if(fl){fl.hidden=!favs.length;fl.querySelector('small').textContent=favs.length}}
 const codeSlug=c=>String(c||'').trim().replace(/[^A-Za-z0-9_-]+/g,'-').replace(/^-+|-+$/g,'');
-function pageURL(p){const b=location.hostname.endsWith('github.io')?location.origin+location.pathname.replace(/[^/]*$/,''):null;return b&&p.c?b+'p/'+codeSlug(p.c)+'.html':location.href.split('#')[0]+'#p-'+p.id}
+function pageURL(p){const b=location.hostname.endsWith('github.io')?location.origin+location.pathname.replace(/[^/]*$/,''):null;return b&&p.c&&!p._nuevo?b+'p/'+codeSlug(p.c)+'.html':location.href.split('#')[0]+'#p-'+p.id}
 function reorderItems(items){let n=0;const ids=[];items.forEach(x=>{const p=(x.c&&P.find(y=>y.c===x.c))||BY.get(x.id);if(p){cart[p.id]=(cart[p.id]||0)+(x.q||1);ids.push(p.id);n++}});if(n){saveCart(true);ids.forEach(id=>refresh(id));openCart()}return n}
 function shareP(id){const p=BY.get(id);const url=pageURL(p);const txt=p.t+(p.pr?' – '+crc(p.pr):'');if(navigator.share){navigator.share({title:p.t,text:txt,url}).catch(()=>{})}else{window.open('https://wa.me/?text='+encodeURIComponent(txt+' '+url),'_blank','noopener')}}
 const S={q:'',brands:[],sub:'',sort:'rel',shown:PAGE,list:[],ctx:'all',pr:-1};
@@ -1029,10 +1029,29 @@ function fotoWatch(el){const id=el.dataset.fid;if(FOTO[id]){el.style.backgroundI
 function fotoIO(){if(!FIO)FIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){FIO.unobserve(e.target);fotoGet(e.target.dataset.fid)}}),{rootMargin:'400px'});return FIO}
 new MutationObserver(ms=>{if(!FIO)return;ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType!==1)return;if(n.dataset&&n.dataset.fid)fotoWatch(n);if(n.querySelectorAll)n.querySelectorAll('[data-fid]').forEach(fotoWatch)}))}).observe(document.body,{childList:true,subtree:true});
 window.CYM_prod=id=>BY.get(+id);
+window.CYM_cats=()=>CATS.map(c=>({k:c.k,label:c.label}));
+window.CYM_catActual=()=>{const m=/^#c-([^/?]+)/.exec(location.hash);return m?decodeURIComponent(m[1]):''};
 window.CYM_setFoto=(id,u,v)=>{id=String(id);if(u){FOTOV[id]=v;FOTO[id]=u;try{localStorage.setItem('cymf'+id,JSON.stringify({v,u}))}catch(e){}}else{delete FOTOV[id];delete FOTO[id];try{localStorage.removeItem('cymf'+id)}catch(e){}}};
 let CAMB_PR={},CAMB_F={};
 const cambRe=p=>{p._t=norm(p.t);p._s=norm([p.t,p.n,p.c,p.xc||'',p.m||'',bname(p.b||''),p.v||'',(CAT[p.k]||{}).label||''].join(' '))};
+
+/* --- productos y secciones nuevas que pone la tienda --- */
+let CAMB_N={},CAMB_S={};
+const ICON_NUEVA='<path d="M3 7h18"/><path d="M5 7l1 13h12l1-13"/><path d="M9 7V4h6v3"/>';
+function aplicarSecciones(S){S=S||{};
+ for(const k in CAMB_S){if(!S[k]){const i=CATS.findIndex(c=>c.k===k&&c._nueva);if(i>=0){CATS.splice(i,1);delete CAT[k]}}}
+ for(const k in S){const x=S[k];if(!x||!x.label)continue;let c=CAT[k];if(!c){c={k,label:String(x.label),short:String(x.label),icon:ICON_NUEVA,_nueva:1};CATS.push(c);CAT[k]=c}else if(c._nueva){c.label=c.short=String(x.label)}}
+ CAMB_S=S}
+function aplicarNuevos(N){N=N||{};
+ for(const k in CAMB_N){if(N[k])continue;const id=+String(k).slice(1),p=BY.get(id);if(p&&p._nuevo){const i=P.indexOf(p);if(i>=0)P.splice(i,1);BY.delete(id);if(counts[p.k])counts[p.k]--}}
+ for(const k in N){const x=N[k],id=+String(k).slice(1);if(!x||!id)continue;let p=BY.get(id);
+  if(!p){p={id,_nuevo:1,q:1,p:0};P.push(p);BY.set(id,p)}else if(!p._nuevo)continue;
+  const oldK=p.k;p.t=String(x.t||'Producto nuevo');p.n=p.t.toUpperCase();p.c=String(x.c||'');p.k=String(x.k||'');p.b=String(x.b||'');p.m=String(x.m||'');p.d=String(x.d||'');p.pr=+x.pr>0?+x.pr:0;
+  if(oldK!==p.k){if(oldK&&counts[oldK])counts[oldK]--;counts[p.k]=(counts[p.k]||0)+1}
+  if(p.c&&!BYCODE.has(p.c))BYCODE.set(p.c,p);p._o=null;cambRe(p)}
+ CAMB_N=N}
 window.applyCambios=function(c){c=c||{};const T=c.tienda||{};
+ aplicarSecciones(c.secciones);aplicarNuevos(c.nuevos);
  for(const k in T){const v=String(T[k]||'').trim();if(k in STORE&&v)STORE[k]=v}
  const PR=c.productos||{};
  for(const k in CAMB_PR){if(PR[k])continue;const p=BY.get(+String(k).slice(1));if(p&&p._o){p.t=p._o.t;p.d=p._o.d;p.pr=p._o.pr;cambRe(p);if(!P.includes(p))P.push(p)}}
@@ -1043,7 +1062,7 @@ window.applyCambios=function(c){c=c||{};const T=c.tienda||{};
  const F=c.fotos||{};for(const k in CAMB_F){if(!F[k])window.CYM_setFoto(String(k).slice(1),null)}
  for(const k in F){const id=String(k).slice(1);if(F[k])FOTOV[id]=F[k]}CAMB_F=F;
  if(Object.keys(FOTOV).length&&'IntersectionObserver' in window)fotoIO();
- try{renderFooter()}catch(e){}try{route()}catch(e){}
+ try{renderMega()}catch(e){}try{renderFooter()}catch(e){}try{route()}catch(e){}
  document.querySelectorAll('[data-fid]').forEach(fotoWatch)};
 
 
