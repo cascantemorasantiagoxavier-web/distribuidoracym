@@ -196,7 +196,7 @@ body,section,.page{font-feature-settings:"calt" 0}
 <style>
 @media screen{
  html,body{background:#5f6368;overflow-x:hidden}
- #book{padding:64px 0 120px;position:relative;z-index:0;isolation:isolate}
+ #book{padding:122px 0 120px;position:relative;z-index:0;isolation:isolate}
  .cymed-bar{z-index:2147483000!important}
  .cymed{z-index:2147483100!important}
  #book .page{margin:0 auto 14px;box-shadow:0 2px 14px rgba(0,0,0,.35)}
@@ -204,17 +204,46 @@ body,section,.page{font-feature-settings:"calt" 0}
  .ctop b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
  .ctop button,.ctop a{height:40px;border:0;border-radius:20px;padding:0 14px;font:800 14px system-ui,sans-serif;background:#F5B700;color:#111;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap}
  .ctop a{background:#3a3d43;color:#fff}
+ .ctop{flex-wrap:wrap}
+ .csearch{flex-basis:100%;display:flex;align-items:center;gap:6px;background:#fff;border-radius:12px;height:46px;padding:0 6px 0 12px}
+ .csearch input{flex:1;min-width:0;border:0;outline:0;font:500 17px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#111;background:transparent;height:44px}
+ .csearch .ci{font-size:18px}
+ .csearch input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+ .ctop .csearch button{height:34px;padding:0 10px;background:#eee;color:#333;font-size:13px}
+ .ctop .csearch button[hidden]{display:none}
+ .cres{position:fixed;left:0;right:0;bottom:0;top:var(--ctoph,112px);z-index:7900;background:#f3f4f6;overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:10px 10px 90px}
+ .cres[hidden]{display:none}
+ .cres .cinfo{color:#444;font-size:14px;margin:4px 4px 10px}
+ .cres .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:none}
+ .cres .chips button{flex:0 0 auto;height:38px;border-radius:19px;border:0;padding:0 14px;font:700 14px system-ui,sans-serif;color:#fff}
+ .sr{display:flex;gap:12px;width:100%;text-align:left;background:#fff;border:0;border-radius:14px;padding:10px;margin:0 auto 10px;max-width:760px;box-shadow:0 1px 4px rgba(0,0,0,.08);font:inherit;color:#111;cursor:pointer;align-items:flex-start}
+ .sr .sim{flex:0 0 84px;height:84px;border-radius:10px;background:#f1f3f5 center/contain no-repeat;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888;text-align:center}
+ .sr .stx{flex:1;min-width:0}
+ .sr .ssec{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}
+ .sr .stt{display:block;font-size:16px;font-weight:700;line-height:1.25;margin:2px 0}
+ .sr .sbr{font-size:13px;color:#666}
+ .sr .scods{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:13px;color:#333}
+ .sr .scods span{white-space:nowrap}.sr .scods b{font-weight:800}
+ .sr .scods .hit{background:#FFF3BF;border-radius:4px;padding:0 3px}
+ .sr .spg{flex:0 0 auto;align-self:center;display:flex;flex-direction:column;align-items:center;font-size:11px;color:#666;font-weight:700}
+ .sr .spg b{display:flex;align-items:center;justify-content:center;min-width:44px;height:44px;border-radius:22px;font-size:17px;color:#fff;margin-top:2px}
+ .cres .cnone{text-align:center;color:#555;font-size:16px;padding:40px 16px}
+ #book article.cymhit{outline:6px solid #F5B700!important;outline-offset:2px;animation:cymhit 1s ease-in-out 3}
+ @keyframes cymhit{50%{outline-color:#ff6b00}}
+
  .cwait{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;color:#fff;font:700 17px system-ui,sans-serif;text-align:center;padding:24px}
  .cwait[hidden]{display:none}
  #book .page[data-pid],#book [data-pid]{cursor:default}
  body.cymedit #book [data-pid]{outline:2px dashed rgba(245,183,0,.0)}
  body.cymedit #book article[data-pid]:hover{outline:3px dashed #F5B700}
 }
-@media print{.ctop,.cwait,.cymed-bar,.cymed-top,#cymedtop,#cymedbtn,#cymednew,.cymed{display:none!important}#book{zoom:1!important}}
+@media print{.ctop,.cres,.cwait,.cymed-bar,.cymed-top,#cymedtop,#cymedbtn,#cymednew,.cymed{display:none!important}#book{zoom:1!important}}
 </style>
-<script>(function(){var V='20261116134715';try{fetch('../version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261116175213';try{fetch('../version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 </head><body>
-<div class="ctop"><a href="../index.html" aria-label="Volver a la tienda">←</a><b id="ctit">Catálogo 2027</b><button type="button" id="cpdf">⬇️ Descargar PDF</button></div>
+<div class="ctop" id="ctop"><a href="../index.html" aria-label="Volver a la tienda">←</a><b id="ctit">Catálogo 2027</b><button type="button" id="cpdf">⬇️ PDF</button>
+<label class="csearch"><span class="ci">🔍</span><input id="cq" type="search" placeholder="Buscar: nombre, código o marca" autocomplete="off" enterkeyhint="search"><button type="button" id="cqx" hidden>Borrar</button></label></div>
+<div class="cres" id="cres" hidden></div>
 <div class="cwait" id="cwait" hidden><div id="cwaitt">Preparando el PDF…</div></div>
 <div id="book"></div>
 <script>
@@ -367,9 +396,52 @@ function render(){
  book.innerHTML=html;fit();
  document.getElementById('ctit').textContent=`Catálogo ${YEAR} · ${body.length} páginas`;
  if(keep)goPage(keep,true);
+ SIDX=[];for(const sec of order)for(const sb of SUBS[sec])for(const c of (byKey.get(sec+'|'+sb)||[])){if(!c.pg)continue;
+  SIDX.push({c,sec,lab:LABEL[sec],col:COL[sec],txt:' '+norm([c.t,c.b,LABEL[sec],sb,c.d||'',c.L.map(p=>p.v).join(' ')].join(' ')).replace(/[^a-z0-9ñ]+/g,' ')+' ',tt:norm(c.t),codes:c.L.map(p=>norm(p.c))})}
+ SECS=order.map((k,i)=>[k,LABEL[k],COL[k],toc[i][2]]);
+ if(document.getElementById('cq').value.trim())doSearch();
  return body.length}
+let SIDX=[],SECS=[];
 function topPage(){const ps=document.querySelectorAll('#book .page');for(const p of ps){const r=p.getBoundingClientRect();if(r.bottom>70)return {id:p.id,off:r.top}}return null}
-function goPage(k,keepOff){const el=document.getElementById(k.id||k);if(!el)return;const y=el.getBoundingClientRect().top+scrollY-(keepOff&&k.off!=null?k.off:64);scrollTo(0,y)}
+const TOPH=()=>document.getElementById('ctop').offsetHeight+6;
+function goPage(k,keepOff){const el=document.getElementById(k.id||k);if(!el)return;const y=el.getBoundingClientRect().top+scrollY-(keepOff&&k.off!=null?k.off:TOPH());scrollTo(0,y)}
+/* ---------- buscador ---------- */
+const cq=document.getElementById('cq'),cres=document.getElementById('cres'),cqx=document.getElementById('cqx');
+const stem=w=>w.length>4?w.replace(/(es|s)$/,''):w;
+const SYN={foco:['bombillo','lampara'],focos:['bombillo'],bombilla:['bombillo'],bombillo:['bombillo','lampara'],aislante:['tape electrico','aislante'],teipe:['tape'],tape:['tape','cinta'],desarmador:['desatornillador'],destornillador:['desatornillador'],atornillador:['desatornillador','taladro'],pinza:['alicate','pinza'],pinzas:['alicate','pinza'],inglesa:['francesa'],serrucho:['serrucho','sierra'],segueta:['segueta','sierra'],grifo:['llave','griferia'],tomacorriente:['toma','tomacorriente'],apagador:['apagador','interruptor','switch'],cañeria:['tubo','tuberia'],caneria:['tubo','tuberia'],tuberia:['tubo','tuberia'],silicon:['silicon','sellador'],pegamento:['pegamento','adhesivo','pega'],goma:['pegamento','adhesivo','goma'],escalera:['escalera'],cadena:['cadena'],mecate:['mecate','cuerda','soga'],cuerda:['cuerda','mecate','soga'],chapa:['cerradura','chapa','llavin'],llavin:['llavin','cerradura'],brocha:['brocha'],rodillo:['rodillo'],manguera:['manguera'],machete:['machete'],pala:['pala'],carretillo:['carretillo','carretilla'],guantes:['guante'],lentes:['lente','anteojo','gafa'],gafas:['lente','anteojo','gafa']};
+function tokHit(x,t){const alts=[t].concat(SYN[t]||[]);let best=0;for(const a of alts){const a2=a.replace(/[\-\/\.]/g,' ').trim();if(!a2)continue;
+ if(x.txt.includes(' '+a2))best=Math.max(best,x.tt.startsWith(a2)?30:10);else if(a2.length>3&&x.txt.includes(' '+stem(a2)))best=Math.max(best,8);else if(a2.length>=3&&x.txt.includes(a2))best=Math.max(best,3)}return best}
+function doSearch(){const raw=cq.value.trim();cqx.hidden=!raw;document.documentElement.style.setProperty('--ctoph',document.getElementById('ctop').offsetHeight+'px');
+ if(!raw){cres.hidden=true;document.body.style.overflow='';return}
+ const q=norm(raw),toks=q.split(/[^a-z0-9ñ\-\/\.]+/).filter(Boolean);const out=[];
+ for(const x of SIDX){let sc=0;const hits=new Set();
+  x.codes.forEach((cd,i)=>{if(!cd)return;if(cd===q.replace(/\s+/g,'')){sc=Math.max(sc,1000);hits.add(i)}else if(q.length>=3&&cd.startsWith(q.replace(/\s+/g,''))){sc=Math.max(sc,400);hits.add(i)}});
+  let part=0;
+  if(!sc&&toks.length){let ws=0,m=0;for(const t of toks){const h=tokHit(x,t);if(h){ws+=h;m++}}
+   if(m===toks.length){sc=ws}else if(toks.length>1&&m>=Math.max(1,toks.length-1)&&ws>=10){sc=ws;part=1}
+   if(sc)x.c.L.forEach((p,i)=>{const v=' '+norm(p.v)+' ';if(toks.some(t=>t.length>1&&v.includes(t)))hits.add(i)})}
+  if(sc)out.push([sc,x,hits,part])}
+ const full=out.filter(o=>!o[3]),parecidos=!full.length&&out.length;if(!parecidos)out.splice(0,out.length,...full);
+ out.sort((a,b)=>b[0]-a[0]||a[1].c.pg-b[1].c.pg);
+ let h=`<div class="cinfo">${out.length?(parecidos?`No hay uno exacto para “${e(raw)}”. Estos se parecen:`:`${out.length>80?'Más de 80':out.length} resultado${out.length===1?'':'s'} para “${e(raw)}”. Toque uno para verlo en el catálogo.`):''}</div>`;
+ if(!out.length)h+=`<div class="cnone">No encontramos “${e(raw)}”.<br>Pruebe con otra palabra o con el código.</div><div class="chips">${SECS.map(s=>`<button type="button" data-go="${s[3]}" style="background:${s[2]}">${e(s[1])}</button>`).join('')}</div>`;
+ h+=out.slice(0,80).map(([sc,x,hits],i)=>{const c=x.c;const L=c.L;
+  let rows=L.map((p,j)=>[p,j]);if(hits.size)rows=rows.filter(r=>hits.has(r[1])).concat(rows.filter(r=>!hits.has(r[1])));
+  const cods=rows.slice(0,8).map(([p,j])=>`<span class="${hits.has(j)?'hit':''}"><b style="color:${textcol(x.col)}">${e(p.c)||'—'}</b>${p.v?' '+e(short_v(p.v,c.t)):''}</span>`).join('')+(L.length>8?`<span>+${L.length-8} más</span>`:'');
+  return `<button type="button" class="sr" data-k="${SIDX.indexOf(x)}" data-j="${hits.size?[...hits][0]:0}"><span class="sim" ${c.im?`style="background-image:url('${e(c.im)}')"`:''}>${c.im?'':'Sin foto'}</span><span class="stx"><span class="ssec" style="color:${textcol(x.col)}">${e(x.lab)}</span><span class="stt">${e(c.t)}</span>${c.b?`<span class="sbr">${e(c.b)}</span>`:''}<span class="scods">${L.length===1&&!L[0].c?'<span>Consulte el código en la tienda</span>':cods}</span></span><span class="spg">Pág.<b style="background:${x.col};color:${oncol(x.col)}">${c.pg}</b></span></button>`}).join('');
+ cres.innerHTML=h;cres.hidden=false;cres.scrollTop=0;document.body.style.overflow='hidden'}
+let sT;cq.addEventListener('input',()=>{clearTimeout(sT);sT=setTimeout(doSearch,160)});
+cq.addEventListener('keydown',ev=>{if(ev.key==='Enter'){cq.blur();doSearch()}if(ev.key==='Escape'){cq.value='';doSearch()}});
+cqx.onclick=()=>{cq.value='';doSearch();cq.focus()};
+function closeRes(){cres.hidden=true;document.body.style.overflow='';cq.blur()}
+cres.addEventListener('click',ev=>{const g=ev.target.closest('[data-go]');if(g){closeRes();goPage('p'+g.dataset.go);return}
+ const b=ev.target.closest('.sr');if(!b)return;const x=SIDX[+b.dataset.k];if(!x)return;closeRes();
+ const pid=x.c.L[0].id;const el=document.querySelector(`#book article[data-pid="${pid}"]`);
+ if(!el){goPage('p'+x.c.pg);return}
+ const r=el.getBoundingClientRect();scrollTo(0,r.top+scrollY-Math.max(TOPH(),(innerHeight-r.height)/2));
+ document.querySelectorAll('#book .cymhit').forEach(a=>a.classList.remove('cymhit'));el.classList.add('cymhit');setTimeout(()=>el.classList.remove('cymhit'),4000)});
+addEventListener('resize',()=>document.documentElement.style.setProperty('--ctoph',document.getElementById('ctop').offsetHeight+'px'));
+const qp=new URLSearchParams(location.search).get('q');if(qp){cq.value=qp}
 function fit(){const w=Math.min(document.documentElement.clientWidth||innerWidth,innerWidth,screen.width||9999);const z=Math.min(1,(w-8)/794);document.getElementById('book').style.zoom=z}
 addEventListener('resize',fit);addEventListener('load',fit);
 document.addEventListener('click',ev=>{const a=ev.target.closest('#book a[href^="#p"]');if(!a||document.body.classList.contains('cymedit-on'))return;ev.preventDefault();goPage(a.getAttribute('href').slice(1))});
@@ -399,6 +471,7 @@ window.applyCambios=async c=>{CAMB=c||{};const F=CAMB.fotos||{};
  for(const id in FOTO)if(!F['p'+id])delete FOTO[id];
  render()};
 render();
+if(cq.value.trim())doSearch();
 if(location.hash&&/^#p\d+$/.test(location.hash))setTimeout(()=>goPage(location.hash.slice(1)),50);
 })();
 </script>
