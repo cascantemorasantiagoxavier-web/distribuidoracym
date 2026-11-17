@@ -306,7 +306,7 @@ body,section,.page{font-feature-settings:"calt" 0}
 }
 @media print{.hdr,#web,.rbar,.cwait,.cymed-bar,.cymed-top,#cymedtop,#cymedbtn,#cymednew,.cymed{display:none!important}#rev{display:block!important;background:none;padding:0;min-height:0}#book{zoom:1!important;padding:0}}
 </style>
-<script>(function(){var V='20261116181341';try{fetch('../version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261116182902';try{fetch('../version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 </head><body>
 <header class="hdr" id="ctop"><div class="in">
 <a class="wlogo" href="../index.html" aria-label="Ir a la tienda de Distribuidora C y M"><img src="../logo.webp" alt="Distribuidora C y M"></a>
@@ -388,6 +388,7 @@ function buildCards(){
   if(!L.length)continue;
   const c=Object.assign({},c0,{L});
   if(L.length===1){const o=P['p'+L[0].id];if(o&&o.t)c.t=o.t;if(o&&o.d&&c.d)c.d=o.d}
+  else{const g=P['p'+c0.L[0][0]];if(g&&g.tg)c.t=g.tg}
   const fp=L.find(p=>F['p'+p.id]&&FOTO[p.id]);if(fp){c.im=FOTO[fp.id];c.q=1}
   out.push(c)}
  let ni=0;
@@ -582,6 +583,7 @@ window.CYM_prod=id=>{id=+id;const N=(CAMB.nuevos||{})['p'+id];
  if(N)return {id,_nuevo:1,t:N.t||'',c:N.c||'',k:N.k||'',b:N.b||'',m:N.m||'',d:N.d||'',pr:N.pr||0};
  let b=WEBP&&WEBP.get(id);if(!b){const c=W.cards.find(c=>c.L.some(x=>x[0]===id));if(!c)return null;const x=c.L.find(x=>x[0]===id);b={id,c:x[1],t:c.L.length===1?c.t:(c.t+' '+x[2]).trim(),d:c.d||'',pr:0,m:''}}
  const o=(CAMB.productos||{})['p'+id]||{};return Object.assign({},b,{t:o.t||b.t,d:o.d||b.d,pr:o.pr||b.pr,_o:{t:b.t,d:b.d,pr:b.pr}})};
+window.CYM_grupo=id=>{id=+id;const c=W.cards.find(c=>c.L.length>1&&c.L.some(x=>x[0]===id));if(!c)return null;const gid=c.L[0][0];const o=(CAMB.productos||{})['p'+gid]||{};return {gid,t0:c.t,t:o.tg||c.t,n:c.L.length}};
 window.CYM_getFotos=null;
 window.applyCambios=async c=>{CAMB=c||{};const F=CAMB.fotos||{};
  if(window.CYM_getFotos){const ids=Object.keys(F).filter(k=>F[k]).map(k=>k.slice(1)).filter(id=>!FOTO[id]);
