@@ -302,12 +302,12 @@ body,section,.page{font-feature-settings:"calt" 0}
  .it .ds{font-size:14px;color:#3d434a;margin:0 0 8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
  .it .sl{font-size:13px;font-weight:700;margin-bottom:2px;text-decoration:none;display:inline-block}
  .wone{display:flex;align-items:baseline;gap:8px;font-size:14px;color:var(--gris)}
- .wone b{font:800 19px 'Inter',sans-serif;font-variant-numeric:tabular-nums;color:var(--cc);letter-spacing:.01em}
+ .wone b{font:800 19px 'Inter',sans-serif;font-variant-numeric:tabular-nums;color:#D32F2F;letter-spacing:.01em}
  .cods{display:grid;grid-template-columns:auto 1fr;gap:0 12px;font-size:14px;font-variant-numeric:tabular-nums}
  .cods>div{display:contents}
  .cods b,.cods span{padding:4px 0;border-top:1px dashed #e2e5e9}
  .cods>div:first-child b,.cods>div:first-child span{border-top:0}
- .cods b{font-weight:800;color:var(--cc);white-space:nowrap}
+ .cods b{font-weight:800;color:#D32F2F;white-space:nowrap}
  .cods span{color:#3d434a}
  .cods .hit b,.cods .hit span{background:#FFF1B8}
  .cods .more{display:none}.cods.open .more{display:contents}
@@ -337,7 +337,7 @@ body,section,.page{font-feature-settings:"calt" 0}
 }
 @media print{.hdr,#web,.rbar,.cwait,.cymed-bar,.cymed-top,#cymedtop,#cymedbtn,#cymednew,.cymed{display:none!important}#rev{display:block!important;background:none;padding:0;min-height:0}#book{zoom:1!important;padding:0}}
 </style>
-<script>(function(){var V='20261116211933';try{fetch('../version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261119152627';try{fetch('../version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 </head><body>
 <header class="hdr" id="ctop"><div class="in">
 <a class="wlogo" href="../index.html" aria-label="Ir a la tienda de Distribuidora C y M"><img src="../logo.webp" alt="Distribuidora C y M"></a>
@@ -398,10 +398,10 @@ function card_html(c,col,tcol){const L=c.L,n=L.length,sl=c.slots,pid=L[0].id;
   if(n>1)opts='<div class="vl"><b>Opciones:</b> '+L.map(p=>e(short_v(p.v,c.t))).join(' · ')+'</div>';
   return `<article class="cd s2 dsc" data-pid="${pid}" style="grid-column:span 2"><div class="ph">${imgTag(c)}</div><div class="bd">${brand}<h3>${e(c.t)}</h3><p class="ds">${e(c.d)}</p>${opts}<div class="one"><small>Consulte el código en la tienda</small></div></div></article>`}
  if(c.sx){const fg=contrast(c.sx,'#FFFFFF')>=2.2?'#FFFFFF':'#2B2F35';
-  return `<article class="cd s1" data-pid="${pid}"><div class="ph sw" style="background:${c.sx};color:${fg}"><b>${e(c.sn)}</b><span class="br">${e(c.b)}</span></div><h3>${e(c.t)}</h3><div class="one"><small>Código</small><b style="color:${tcol}">${e(L[0].c)}</b></div></article>`}
+  return `<article class="cd s1" data-pid="${pid}"><div class="ph sw" style="background:${c.sx};color:${fg}"><b>${e(c.sn)}</b><span class="br">${e(c.b)}</span></div><h3>${e(c.t)}</h3><div class="one"><small>Código</small><b style="color:#D32F2F">${e(L[0].c)}</b></div></article>`}
  const ph=imgTag(c);const badge=n>1?`<span class="nb" style="background:${col};color:${oncol(col)}">${n} opciones</span>`:'';const brand=c.b?`<span class="br">${e(c.b)}</span>`:'';let tbl;
- if(n===1)tbl=L[0].c?`<div class="one"><small>Código</small><b style="color:${tcol}">${e(L[0].c)}</b></div>`:'<div class="one"><small>Consulte el código en la tienda</small></div>';
- else{const cells=L.map(p=>`<div class="r" data-pid="${p.id}"><b style="color:${tcol}">${e(p.c)||'—'}</b><span>${e(short_v(p.v,c.t))}</span></div>`).join('');
+ if(n===1)tbl=L[0].c?`<div class="one"><small>Código</small><b style="color:#D32F2F">${e(L[0].c)}</b></div>`:'<div class="one"><small>Consulte el código en la tienda</small></div>';
+ else{const cells=L.map(p=>`<div class="r" data-pid="${p.id}"><b style="color:#D32F2F">${e(p.c)||'—'}</b><span>${e(short_v(p.v,c.t))}</span></div>`).join('');
   tbl=`<div class="tb" style="grid-template-columns:repeat(${c.cols},minmax(0,1fr));grid-template-rows:repeat(${c.rows},14px);grid-auto-flow:column">${cells}</div>`}
  if(sl===1)return `<article class="cd s1" data-pid="${pid}"><div class="ph">${ph}${brand}${badge}</div><h3>${e(c.t)}</h3>${tbl}</article>`;
  return `<article class="cd s${sl}" data-pid="${pid}" style="grid-column:span ${sl}"><div class="ph">${ph}${badge}</div><div class="bd">${brand}<h3>${e(c.t)}</h3>${tbl}</div></article>`}
@@ -487,8 +487,8 @@ function render(){
   ph=`<div class="ph"${h?` style="height:${h}px"`:''}>${c.im?`<img src="${e(c.im)}" alt="" loading="lazy">`:'<span class="no">Foto próximamente</span>'}${n>1?`<span class="nb" style="background:${col};color:${on}">${n} medidas</span>`:''}</div>`}
  const meta=`<div class="mt"><span class="ct" style="color:${tcol}">${e(c.sub)}</span>${c.b?`<span class="br9">${e(c.b)}</span>`:''}</div>`;
  let cod;
- if(n===1)cod=L[0].c?`<div class="c1" style="background:${col};color:${on}"><small>Código</small><b>${e(L[0].c)}</b></div>`:`<div class="c1 nc" style="background:${tn};color:${tcol}"><small>Consulte el código en la tienda</small></div>`;
- else{const nc=wide?(n>22?3:2):(n<=4?1:2);cod=`<div class="tb9" style="grid-template-columns:repeat(${nc},minmax(0,1fr));grid-template-rows:repeat(${Math.ceil(n/nc)},auto)">`+L.map(p=>`<div data-pid="${p.id}"><b style="background:${tn};color:${tcol}">${e(p.c)||'—'}</b><span>${e(short_v(p.v,c.t))}</span></div>`).join('')+'</div>'}
+ if(n===1)cod=L[0].c?`<div class="c1" style="background:${col};color:${on}"><small>Código</small><b style="color:#FF3B3B">${e(L[0].c)}</b></div>`:`<div class="c1 nc" style="background:${tn};color:${tcol}"><small>Consulte el código en la tienda</small></div>`;
+ else{const nc=wide?(n>22?3:2):(n<=4?1:2);cod=`<div class="tb9" style="grid-template-columns:repeat(${nc},minmax(0,1fr));grid-template-rows:repeat(${Math.ceil(n/nc)},auto)">`+L.map(p=>`<div data-pid="${p.id}"><b style="background:${tn};color:#D32F2F">${e(p.c)||'—'}</b><span>${e(short_v(p.v,c.t))}</span></div>`).join('')+'</div>'}
  const ds=c.d&&(n===1&&!L[0].c||ban)?`<p class="ds9">${e(c.d)}</p>`:'';
  return `<article class="c9${wide?' w2':''}${ban?' w3':''}" data-pid="${pid}"${wide||ban?` style="grid-column:span ${c.cells}"`:''}>${ph}<div class="bd">${meta}<h3>${e(c.t)}</h3>${ds}${cod}</div></article>`}
 function prod9(sec,ci,cards,num){const col=COL[sec],tcol=textcol(col),on=oncol(col);const subs=[];cards.forEach(c=>{if(!subs.includes(c.sub))subs.push(c.sub)});
