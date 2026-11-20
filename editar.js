@@ -105,6 +105,7 @@ function close(){const o=q('#cymed');if(o)o.remove();document.body.style.overflo
 function msg(t){const m=q('#cymmsg');if(m){m.style.color='#b00020';m.textContent=t}}
 function toast(t,bad){const d=document.createElement('div');d.className='cymed-toast cymed-ui';if(bad)d.style.background='#b00020';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
 async function setMap(d,k,v){const r=doc(db,'cambios',d),del=v===null;try{await updateDoc(r,{[k]:del?deleteField():v})}catch(er){if(er&&er.code==='not-found'){if(del)return;await setDoc(r,{[k]:v})}else throw er}}
+window.CYM_guardarFoto=async(id,u,c,t)=>{const v=Date.now();await setDoc(doc(db,'fotos',String(id)),{img:u,v,c:c||'',t:t||'',por:auth.currentUser&&auth.currentUser.email||''});await setMap('fotos','p'+id,v);window.CYM_setFoto&&window.CYM_setFoto(id,u,v);return v};
 async function save(o0){const p=P;if(!p)return;const b=q('#cymsv'),m=q('#cymmsg');
  if(p._nuevo){const t=q('#cymt').value.trim();if(!t){msg('Escriba el nombre del producto.');return}
   b.disabled=true;m.style.color='#555';m.textContent='Guardando…';
