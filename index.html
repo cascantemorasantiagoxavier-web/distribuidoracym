@@ -877,7 +877,7 @@ body.chatopen .chatfab{display:none}
 @media (max-width:760px){.tabbar{grid-template-columns:repeat(5,1fr)}.tabbar a,.tabbar button{font-size:11.5px}}
 @media print{.chat,.chatfab,.hback{display:none!important}}
 </style>
-<script>(function(){var V='20261120084848';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261120085042';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 <link rel="stylesheet" href="cuenta.css">
 </head>
 <body>
@@ -1512,6 +1512,41 @@ function ads4(){return `<section class="wrap blk" aria-label="Más marcas"><div 
  ${adTile('y','Boxer','Guantes, cuerdas y herrajes','Guantes de trabajo, cuerdas, gazas, bisagras, brocas y más.','#m-boxer',bestOf(p=>p.b==='BOXER'&&p.i,3))}
  ${adTile('g','Durman','PVC y accesorios','Codos, tubos, uniones, tees, adaptadores y pegamento.','#m-durman',bestOf(p=>p.b==='DURMAN'&&p.i,3))}
 </div></section>`}
+function adsx0(){return `<section class="wrap blk" aria-label="Más anuncios 5"><div class="banner3">
+ ${adTile('o','Uyus','Cerrajería y herrajes','Picaportes, aldabas, llanetas y escuadras.','#m-uyus',bestOf(p=>p.b==='UYUS'&&p.i,3))}
+ ${adTile('b','Yiad','Albañilería y acabados','Discos, espátulas, niveles, brocas y juegos.','#m-yiad',bestOf(p=>p.b==='YIAD'&&p.i,3))}
+ ${adTile('k','Masaca','Herrajes para el hogar','Bisagras, grapas, picaportes y cintas.','#m-masaca',bestOf(p=>p.b==='MASACA'&&p.i,3))}
+</div></section>`}
+function adsx1(){return `<section class="wrap blk" aria-label="Más anuncios 6"><div class="banner3">
+ ${adTile('y','Tania','Apagadores y tomas','Línea eléctrica residencial: apagadores, dimmer y tomacorrientes.','#m-tania',bestOf(p=>p.b==='TANIA'&&p.i,3))}
+ ${adTile('c','Eagle','Tomas, enchufes y canaleta','Tomas, apagadores, enchufes, sockets y canaleta.','#m-eagle',bestOf(p=>p.b==='EAGLE'&&p.i,3))}
+ ${adTile('r','3M','Lijas y cintas','Lijas, cinta masking, conectores y terminales.','#m-3m',bestOf(p=>p.b==='3M'&&p.i,3))}
+</div></section>`}
+function adsx2(){return `<section class="wrap blk" aria-label="Más anuncios 7"><div class="banner3">
+ ${adTile('g','Klingspor','Lijas profesionales','Lijas y discos para madera y metal.','#m-klingspor',bestOf(p=>p.b==='KLINGSPOR'&&p.i,3))}
+ ${adTile('k','NGK','Bujías','Bujías para carro y moto.','#m-ngk',bestOf(p=>p.b==='NGK'&&p.i,3))}
+ ${adTile('b','Condumex','Cable eléctrico','Cable para instalaciones de casa y obra.','#m-condumex',bestOf(p=>p.b==='CONDUMEX'&&p.i,3))}
+</div></section>`}
+function adsx3(){return `<section class="wrap blk" aria-label="Más anuncios 8"><div class="banner3">
+ ${adTile('y','Aksi','Bombillos y extensiones','Bombillos y extensiones para la casa.','#m-aksi',bestOf(p=>p.b==='AKSI'&&p.i,3))}
+ ${adTile('c','Unimax','Cuidado del carro','Paños, coolant, escobillas y abrillantador.','#m-unimax',bestOf(p=>p.b==='UNIMAX'&&p.i,3))}
+ ${adTile('o','Tramontina','Cuchillos y llanetas','Cuchillos, cuchillas, llanetas y herramienta de mano.','#m-tramontina',bestOf(p=>p.b==='TRAMONTINA'&&p.i,3))}
+</div></section>`}
+function adsx4(){return `<section class="wrap blk" aria-label="Más anuncios 9"><div class="banner3">
+ ${adTile('g','Torfix','Tornillos','Tornillos de varios tipos y medidas.','#m-torfix',bestOf(p=>p.b==='TORFIX'&&p.i,3))}
+ ${adTile('r','Victoria','Botas de trabajo','Botas para obra, campo y trabajo diario.','#m-victoria',bestOf(p=>p.b==='VICTORIA'&&p.i,3))}
+ ${adTile('k','Hardex','Cintas, cedazos y herrajes','Cintas, cedazos, aldabas y tenazas.','#m-hardex',bestOf(p=>p.b==='HARDEX'&&p.i,3))}
+</div></section>`}
+function adsx5(){return `<section class="wrap blk" aria-label="Más anuncios 10"><div class="banner3">
+ ${adTile('b','Irwin','Discos y puntas','Discos y puntas para cortar y atornillar.','#m-irwin',bestOf(p=>p.b==='IRWIN'&&p.i,3))}
+ ${adTile('y','Kraft','Brocas para metal','Brocas de cobalto y HSS en varias medidas.','#m-kraft',bestOf(p=>p.b==='KRAFT'&&p.i,3))}
+ ${adTile('c','Kenneth','Llaves y cacheras','Llaves, cacheras, barras y émbolos.','#m-kenneth',bestOf(p=>p.b==='KENNETH'&&p.i,3))}
+</div></section>`}
+function adsx6(){return `<section class="wrap blk" aria-label="Más anuncios 11"><div class="banner3">
+ ${adTile('g','Fama','Plomería','Válvulas, peras, tubos y desagües.','#m-fama',bestOf(p=>p.b==='FAMA'&&p.i,3))}
+ ${adTile('o','Redpower','Equipo de jardín','Hidrolavadoras, motosierras, sopladoras y motoguadañas.','#m-redpower',bestOf(p=>p.b==='REDPOWER'&&p.i,3))}
+ ${adTile('r','Flosser','Bombillos y fusibles','Bombillos, fusibles y relays para el carro.','#m-flosser',bestOf(p=>p.b==='FLOSSER'&&p.i,3))}
+</div></section>`}
 function priceTiles(){return `<section class="wrap blk" aria-labelledby="h-precio"><div class="sh"><div><h2 id="h-precio" class="disp">Compre por precio</h2><p>Precios con IVA incluido</p></div></div><div class="ptiles">${PR.map((r,i)=>{const L=onePerFamily(P.filter(p=>p.pr>=r[0]&&p.pr<r[1]&&(p.sv||0)>=5).sort((a,b)=>b.sv-a.sv),2);const n=P.filter(p=>p.pr>=r[0]&&p.pr<r[1]).length;return `<a class="pt${i===0?' a':''}" href="#precio-${i}"><small class="num">${fmt(n)} productos</small><b>${r[2]}</b><span class="go">Ver productos ${ic('right','width:15px;height:15px')}</span><span class="ims">${L.map(p=>`<span>${spr(p,'','',1)}</span>`).join('')}</span></a>`}).join('')}</div></section>`}
 function pick7(){const L=P.filter(p=>p.b==='7FC');if(!L.length)return '';const first=L.find(p=>/rojo escarlata/i.test(p.t))||L[0];
  return `<section class="wrap blk" aria-labelledby="h-7fc"><div class="pick7"><div class="can"><span id="p7img">${spr(first,'','',1)}</span><span class="nm" id="p7nm">${esc(first.t.replace('Pintura en spray 7FC ','').replace(' 400 ml',''))}</span></div>
@@ -1565,16 +1600,23 @@ function viewHome(){renderCatbar('home');document.title='Distribuidora C y M · 
   </div></section>
   ${ads1()}
   ${rail('truper','Lo mejor de Truper','Herramienta mexicana de confianza',tru,'#m-truper','tr')}
+  ${adsx0()}
   ${pick7()}
   ${rail('obra','Para la obra','Medición, albañilería, brocas y discos',obra,'#c-medicion','ob')}
+  ${adsx1()}
   ${rail('plom','Plomería y PVC','Grifería, tubería y accesorios',plom,'#c-plomeria','pl')}
+  ${adsx2()}
   ${rail('auto','Automotriz','Aceites, silicones y limpiadores',bestOf(p=>p.k==='automotriz',14),'#c-automotriz','au')}
+  ${adsx3()}
   <section class="wrap blk"><div class="strip"><div><h3>¿No encuentra lo que busca?</h3><p>Tenemos mucho más en tienda. Pregúntenos y le ayudamos.</p></div><a class="btn" href="#contacto" data-scroll="contacto">Contáctenos ${ic('right')}</a></div></section>
   ${rail('elec','Electricidad','Cable, breakers, tomas e iluminación',bestOf(p=>p.k==='electrico'&&/^(Cable|Breaker|Centro de carga|Toma|Apagador|Bombillo|Extensión|Regleta|Socket|Enchufe)/.test(p.t),14),'#c-electrico','el')}
+  ${adsx4()}
   ${ads2()}
   ${rail('cheap','Menos de ₡2.000','Lo de todos los días, a buen precio',onePerFamily(P.filter(p=>p.pr&&p.pr<2000&&(p.sv||0)>=10).sort((a,b)=>b.sv-a.sv),40).slice(0,14),'','ch')}
+  ${adsx5()}
   <section class="wrap blk"><div class="volb"><div><span class="pill">Constructores y negocios</span><h3>¿Compra para obra o negocio?</h3><p>Arme su lista en el carrito y, al hacer el pedido, marque “Es para obra o negocio”. Le preparamos una cotización por volumen.</p></div><a class="btn acc" href="#catalogo" style="flex:0 0 auto">Armar mi lista ${ic('right')}</a></div></section>
   ${rail('jardin','Jardín y agro','Para el campo, la finca y el jardín',bestOf(p=>p.k==='jardin',14),'#c-jardin','ja')}
+  ${adsx6()}
   ${ads3()}
   ${ads4()}
   ${rail('segur','Seguridad industrial','Protéjase en el trabajo',bestOf(p=>p.k==='seguridad',14),'#c-seguridad','se')}
