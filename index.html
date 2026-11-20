@@ -877,7 +877,7 @@ body.chatopen .chatfab{display:none}
 @media (max-width:760px){.tabbar{grid-template-columns:repeat(5,1fr)}.tabbar a,.tabbar button{font-size:11.5px}}
 @media print{.chat,.chatfab,.hback{display:none!important}}
 </style>
-<script>(function(){var V='20261120071731';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261120084848';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 <link rel="stylesheet" href="cuenta.css">
 </head>
 <body>
@@ -1507,6 +1507,11 @@ function ads3(){return `<section class="wrap blk" aria-label="Marcas destacadas"
  ${adTile('c','Pinturas','Color para cada trabajo','Brochas, rodillos, masillas, diluyentes y pintura en spray.','#c-pinturas',bestOf(p=>p.k==='pinturas'&&p.i&&p.b!=='7FC',3))}
  ${adTile('o','Fiero y Hermex','Herrajes y cerrajería','Candados, bisagras, cerraduras, cadenas y accesorios.','#c-cerrajeria',bestOf(p=>['FIERO','HERMEX'].includes(p.b)&&p.k==='cerrajeria'&&p.i,3))}
 </div></section>`}
+function ads4(){return `<section class="wrap blk" aria-label="Más marcas"><div class="banner3">
+ ${adTile('b','Amanco','Tubería y accesorios PVC','Tubos, codos, tees, uniones y pegamento para su instalación.','#m-amanco',bestOf(p=>p.b==='AMANCO'&&p.i,3))}
+ ${adTile('y','Boxer','Guantes, cuerdas y herrajes','Guantes de trabajo, cuerdas, gazas, bisagras, brocas y más.','#m-boxer',bestOf(p=>p.b==='BOXER'&&p.i,3))}
+ ${adTile('g','Durman','PVC y accesorios','Codos, tubos, uniones, tees, adaptadores y pegamento.','#m-durman',bestOf(p=>p.b==='DURMAN'&&p.i,3))}
+</div></section>`}
 function priceTiles(){return `<section class="wrap blk" aria-labelledby="h-precio"><div class="sh"><div><h2 id="h-precio" class="disp">Compre por precio</h2><p>Precios con IVA incluido</p></div></div><div class="ptiles">${PR.map((r,i)=>{const L=onePerFamily(P.filter(p=>p.pr>=r[0]&&p.pr<r[1]&&(p.sv||0)>=5).sort((a,b)=>b.sv-a.sv),2);const n=P.filter(p=>p.pr>=r[0]&&p.pr<r[1]).length;return `<a class="pt${i===0?' a':''}" href="#precio-${i}"><small class="num">${fmt(n)} productos</small><b>${r[2]}</b><span class="go">Ver productos ${ic('right','width:15px;height:15px')}</span><span class="ims">${L.map(p=>`<span>${spr(p,'','',1)}</span>`).join('')}</span></a>`}).join('')}</div></section>`}
 function pick7(){const L=P.filter(p=>p.b==='7FC');if(!L.length)return '';const first=L.find(p=>/rojo escarlata/i.test(p.t))||L[0];
  return `<section class="wrap blk" aria-labelledby="h-7fc"><div class="pick7"><div class="can"><span id="p7img">${spr(first,'','',1)}</span><span class="nm" id="p7nm">${esc(first.t.replace('Pintura en spray 7FC ','').replace(' 400 ml',''))}</span></div>
@@ -1571,6 +1576,7 @@ function viewHome(){renderCatbar('home');document.title='Distribuidora C y M · 
   <section class="wrap blk"><div class="volb"><div><span class="pill">Constructores y negocios</span><h3>¿Compra para obra o negocio?</h3><p>Arme su lista en el carrito y, al hacer el pedido, marque “Es para obra o negocio”. Le preparamos una cotización por volumen.</p></div><a class="btn acc" href="#catalogo" style="flex:0 0 auto">Armar mi lista ${ic('right')}</a></div></section>
   ${rail('jardin','Jardín y agro','Para el campo, la finca y el jardín',bestOf(p=>p.k==='jardin',14),'#c-jardin','ja')}
   ${ads3()}
+  ${ads4()}
   ${rail('segur','Seguridad industrial','Protéjase en el trabajo',bestOf(p=>p.k==='seguridad',14),'#c-seguridad','se')}
   <section class="wrap blk" aria-labelledby="h-brands"><div class="sh"><div><h2 id="h-brands" class="disp">Marcas</h2><p>Busque por su marca favorita</p></div></div>
    <div class="brandwall">${brandsTop.map(b=>`<a class="bw" style="--bc:${({o:'#F2780C',y:'#F5B700',b:'#2563C9',r:'#E11D48',k:'#3B3833',c:'#16A3B8',g:'#2E9E4F'})[(BRANDINFO[b]||['k'])[0]]}" href="#m-${slug(bname(b))}"><b>${esc(bname(b))}</b><small class="num">${fmt(bcount[b])} productos</small></a>`).join('')}</div></section>
