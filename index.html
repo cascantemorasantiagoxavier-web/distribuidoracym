@@ -877,7 +877,7 @@ body.chatopen .chatfab{display:none}
 @media (max-width:760px){.tabbar{grid-template-columns:repeat(5,1fr)}.tabbar a,.tabbar button{font-size:11.5px}}
 @media print{.chat,.chatfab,.hback{display:none!important}}
 </style>
-<script>(function(){var V='20261120085042';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261120091227';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 <link rel="stylesheet" href="cuenta.css">
 </head>
 <body>
@@ -2087,6 +2087,7 @@ function cMsg(m){
     h=`<p class="ch">${esc(p.h)}</p><p>${esc(p.t)}</p>${m.ids.length?`<p class="cl">Esto es lo que le recomiendo llevar:</p>${cProds(m.ids)}`:''}${m.price?`<p class="cnote">${ic('tag','width:15px;height:15px')}Los precios con IVA aparecen en cada producto; la disponibilidad se la confirmamos con su pedido.</p>`:''}${p.g!==undefined?`<a class="glink" href="#guia-${p.g}" data-chatlink>Ver la guía paso a paso ›</a>`:''}${m.alts&&m.alts.length?`<p class="cl">¿O se refiere a…?</p><div class="cchips">${m.alts.map(k=>{const a=PROBS.find(x=>x.k===k);return `<button type="button" data-chatk="${k}">${esc(a.h)}</button>`}).join('')}</div>`:''}`}
   else if(m.b==='srch')h=`<p>${m.price?'Los precios con IVA aparecen en cada producto; la disponibilidad se la confirmamos con su pedido. ':''}Esto es lo que encontré en el catálogo${m.fixed?` para “${esc(m.fixed)}”`:''}:</p>${cProds(m.ids,1)}${m.n>m.ids.length?`<button class="lnk cmore" type="button" data-chatsrch="${esc(m.q)}">Ver los ${fmt(m.n)} resultados ›</button>`:''}${(()=>{const p=BY.get(m.ids[0]);const L=p?complements(p,3):[];return L.length?`<p class="cl">Con esto también se suele llevar:</p>${cProds(L.map(x=>x.id),1)}`:''})()}<p class="cl">¿Para qué lo necesita? Si me cuenta, le digo qué más le puede servir.</p>`;
   else if(m.b==='none')h=`<p>Disculpe, no le entendí bien. Cuénteme con otras palabras qué le pasa o qué quiere hacer, por ejemplo: “gotea el tubo del lavatorio” o “quiero colgar una repisa”.</p><p>También puede usar el <a href="#asesor" data-chatlink>Asesor de compras</a> ${HAS('telefono')?`o llamarnos al ${esc(STORE.telefono)}`:'o escribirnos aquí mismo'}.</p>${chatChips(CHATQ.slice(0,4))}`;
+  else if(m.b==='ai')h=m.text.split(/\n+/).filter(Boolean).map(t=>`<p>${esc(t)}</p>`).join('')+(m.ids.length?`<p class="cl">Puede verlos aquí:</p>${cProds(m.ids)}`:'');
   else if(m.b==='txt')h=m.h;
   return `<div class="cm b">${h}</div>`}
 function chatCount(){const el=$('#ccount');if(el)el.textContent=totals().units}
@@ -2111,7 +2112,23 @@ function chatReply(txt){const n=norm(txt).replace(/[^a-z0-9 ]+/g,' ').replace(/\
   return {b:'none'}}
 function chatAsk(txt,k){txt=String(txt||'').trim();if(!txt||chatBusy)return;chatLog.push({u:txt});chatBusy=true;chatRender();chatScroll();
   const m=k?(()=>{const p=PROBS.find(x=>x.k===k);return {b:'ans',k,ids:advPicks(p,ADVUSE[2]).map(x=>x.id),alts:[]}})():chatReply(txt);
-  setTimeout(()=>{chatBusy=false;chatLog.push(m);if(chatLog.length>60)chatLog=chatLog.slice(-60);chatRender();chatScroll()},450)}
+  const done=mm=>{chatBusy=false;chatLog.push(mm);if(chatLog.length>60)chatLog=chatLog.slice(-60);chatRender();chatScroll()};
+  if(!CYM_AI_URL||k||m.b==='txt'&&/Con mucho gusto|¿En qué le puedo ayudar/.test(m.h||'')){setTimeout(()=>done(m),450);return}
+  aiAsk(txt,m).then(r=>done(r||m)).catch(()=>done(m))}
+const CYM_AI_URL='';
+async function aiAsk(txt,m){
+  const w=norm(txt).replace(/[^a-z0-9 ]+/g,' ').split(' ').filter(x=>x&&!CHATSTOP.has(x)).join(' ');
+  let ids=[];if(m.ids)ids=ids.concat(m.ids);
+  try{const S=w?searchSmart(w):{list:[]};ids=ids.concat(onePerFamily(S.list,10).map(p=>p.id))}catch(e){}
+  ids=[...new Set(ids)].slice(0,14);
+  const c=ids.map(id=>BY.get(id)).filter(Boolean).map(p=>({id:p.id,t:p.t,pr:p.pr||0}));
+  const h=chatLog.filter(x=>x.u!==undefined||x.b==='ai').slice(-7,-1).map(x=>x.u!==undefined?{r:'u',t:x.u}:{r:'a',t:x.raw});
+  const info=['entregas','horario','direccion','telefono'].map(k=>STORE[k]&&!/^\[/.test(STORE[k])?k+': '+STORE[k]:'').filter(Boolean).join('. ')+'. Envío gratis desde ₡110.000. Pedido sin pago en línea: la tienda confirma precio y entrega.';
+  const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),15000);
+  try{const r=await fetch(CYM_AI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:txt,h,c,info}),signal:ctl.signal});
+    if(!r.ok)return null;const j=await r.json();if(!j.text)return null;
+    const used=[];const raw=j.text;const clean=raw.replace(/\s*\[\[(\d+)\]\]/g,(a,id)=>{id=+id;if(BY.has(id)&&ids.includes(id)&&!used.includes(id))used.push(id);return ''});
+    return {b:'ai',raw,text:clean,ids:used.slice(0,5)}}finally{clearTimeout(to)}}
 function chatAll(ids){const L=ids.split(',').map(Number).filter(id=>BY.has(id)&&!cart[id]);L.forEach(id=>{cart[id]=1});saveCart(true);L.forEach(id=>refresh(id));chatRender(true);
   chatLog.push({b:'txt',h:`<p>${ic('check','width:16px;height:16px')} <b>Listo, le agregué ${L.length} producto${L.length===1?'':'s'} al carrito.</b> ¿Le ayudo con algo más?</p><button class="btn call" type="button" data-opencart>Ver mi carrito (${totals().units})</button>`});chatRender();chatScroll()}
 function chatHome(){return `<section class="wrap blk" aria-labelledby="h-chat"><div class="chome"><div class="ct"><span class="pill">${ic('chat','width:15px;height:15px')} Pregúntele al vendedor</span><h2 id="h-chat" class="disp">¿Qué problema tiene?</h2><p>Escríbalo como se lo diría al vendedor. Le respondemos qué hacer y qué llevar.</p></div>
