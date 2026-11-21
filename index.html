@@ -286,6 +286,7 @@ section.blk{padding-top:40px}
 /* ---------- banners ---------- */
 .banner2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:760px){.banner2{grid-template-columns:1fr}}
+.hcchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 14px}.hcchips::-webkit-scrollbar{display:none}.hcchip{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px;cursor:pointer}.hcchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}.hcat .more{display:block;margin:18px auto 0;padding:13px 26px;border-radius:10px;border:1.5px solid var(--ink);background:var(--surface);font-weight:700;font-size:15px;cursor:pointer}.hcat .more:hover{background:var(--accent)}.hcat .all{display:block;text-align:center;margin-top:12px;font-weight:600}
 .mq{overflow:hidden;margin:0 -4px;padding:4px}.mqt{display:flex;gap:16px;width:max-content;animation:mqm 38s linear infinite}.mq.rv .mqt{animation-direction:reverse}.mq:hover .mqt,.mq:active .mqt{animation-play-state:paused}.mqt .bn{flex:0 0 min(430px,86vw)}@keyframes mqm{to{transform:translateX(calc(-50% - 8px))}}@media (prefers-reduced-motion:reduce){.mqt{animation:none}.mq{overflow-x:auto}}
 .bn{border-radius:20px;overflow:hidden;display:grid;grid-template-columns:1.2fr 1fr;min-height:220px;text-decoration:none;position:relative;box-shadow:var(--shadow)}
 .bn .t{padding:26px;display:flex;flex-direction:column;gap:10px;justify-content:center}
@@ -879,7 +880,7 @@ body.chatopen .chatfab{display:none}
 @media (max-width:760px){.tabbar{grid-template-columns:repeat(5,1fr)}.tabbar a,.tabbar button{font-size:11.5px}}
 @media print{.chat,.chatfab,.hback{display:none!important}}
 </style>
-<script>(function(){var V='20261121065047';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261121065413';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 <link rel="stylesheet" href="cuenta.css">
 </head>
 <body>
@@ -1573,6 +1574,14 @@ function goSlide(i){const sl=document.querySelectorAll('#slider .slide');if(!sl.
 function autoSlide(){clearInterval(slideT);if(matchMedia('(prefers-reduced-motion: reduce)').matches||matchMedia('(max-width: 760px)').matches)return;slideT=setInterval(()=>{if(document.getElementById('slider'))goSlide(slideI+1)},6500)}
 const CATPIC={herramientas:'8889',electricas:'30985',brocas:'12359',abrasivos:'2202996',medicion:'9797',tornilleria:'F1016',cintas:'5959',pinturas:'p7cf23',electrico:'B230',plomeria:'24871',pvc:'T0004',cerrajeria:'43948',seguridad:'13603',jardin:'9857',limpieza:'19148',automotriz:'6619'};
 function catPic(k){const p=BYCODE.get(CATPIC[k]);if(p&&p.i&&p.k===k)return p;return P.find(x=>x.k===k&&x.i)}
+
+const HC={k:'',n:0,list:[]};
+function hcList(k){return onePerFamily(P.filter(p=>p.pr&&(!k||p.k===k)).sort((a,b)=>(b.sv||0)-(a.sv||0)),4000)}
+function homeCat(){const cs=CATS.filter(c=>P.some(p=>p.k===c.k&&p.pr&&p.i)).slice(0,14);return `<section class="wrap blk hcat" id="catprecios" aria-labelledby="h-hc"><div class="sh"><div><h2 id="h-hc" class="disp">Catálogo con precios</h2><p>Baje y vea lo que hay. Precios con IVA incluido.</p></div></div><div class="hcchips"><button type="button" class="hcchip on" data-hck="">Todo</button>${cs.map(c=>`<button type="button" class="hcchip" data-hck="${c.k}">${esc(c.label||c.k)}</button>`).join('')}</div><div class="grid" id="hcgrid"></div><div id="hcsent" style="height:1px"></div><button type="button" class="more" id="hcmore" style="display:none">Mostrar más productos</button><a class="all" href="#catalogo">Ver todo el catálogo</a></section>`}
+function hcFill(){const g=document.getElementById('hcgrid');if(!g)return false;const a=HC.list.slice(HC.n,HC.n+24);if(!a.length)return false;g.insertAdjacentHTML('beforeend',a.map(p=>card(p)).join(''));HC.n+=a.length;return HC.n<HC.list.length}
+function hcReset(k){HC.k=k;HC.n=0;HC.list=hcList(k);const g=document.getElementById('hcgrid');if(g)g.innerHTML='';HC.auto=0;hcFill();const m=document.getElementById('hcmore');if(m)m.style.display='none'}
+function hcCheck(){const s=document.getElementById('hcsent');if(!s)return;const m=document.getElementById('hcmore');let g=0;while(g++<4&&s.getBoundingClientRect().top<innerHeight+500){if(HC.auto<3&&HC.n<HC.list.length){HC.auto++;hcFill()}else break}m.style.display=(HC.auto>=3&&HC.n<HC.list.length)?'block':'none'}
+function bindHomeCat(){const s=document.getElementById('hcsent');if(!s)return;hcReset('');const m=document.getElementById('hcmore');if(!window._hcs){window._hcs=1;addEventListener('scroll',hcCheck,{passive:true})}m.onclick=()=>{hcFill();if(HC.n>=HC.list.length)m.style.display='none'};document.querySelectorAll('.hcchip').forEach(b=>b.onclick=()=>{document.querySelectorAll('.hcchip').forEach(x=>x.classList.toggle('on',x===b));hcReset(b.dataset.hck)})}
 function viewHome(){renderCatbar('home');document.title='Distribuidora C y M · Ferretería';
   const fy=forYou(12);
   const feat=onePerFamily(pickCodes(['30985','32022','8889','41262','43948','9797','12359','2202996','10009','24871','13603','9782','6619','31035','42525','14005']),14);
@@ -1600,6 +1609,7 @@ function viewHome(){renderCatbar('home');document.title='Distribuidora C y M · 
   <section class="wrap blk"><div class="pickup"><div><span class="pill" style="background:var(--accent);color:var(--ink)">Fácil y sin pagar en línea</span><h3>Pida por la web, retire o reciba</h3><p>Arme su carrito en minutos. Nosotros le confirmamos todo antes de prepararlo.</p></div>
    <div class="ps"><div class="pst"><span class="n">1</span><span><b>Arme su carrito</b><small>Con precios con IVA</small></span></div><div class="pst"><span class="n">2</span><span><b>Le confirmamos</b><small>Disponibilidad y entrega</small></span></div><div class="pst"><span class="n">3</span><span><b>Retire o reciba</b><small>Envío gratis desde ₡110.000</small></span></div></div></div></section>
   ${chatHome()}
+  ${homeCat()}
   ${fy.length?rail('foryou','Recomendados para usted','Según lo que ha visto y agregado al carrito',fy,'','fy'):''}
   ${rail('feat','Destacados','Lo más buscado en ferretería',feat,'#catalogo','ft')}
   ${rail('top','Lo más vendido','Lo que más llevan nuestros clientes',onePerFamily(P.filter(p=>p.q&&p.sv&&p.pr>=1500).sort((a,b)=>b.sv*Math.sqrt(b.pr)-a.sv*Math.sqrt(a.pr)),40).slice(0,14),'','tp')}
@@ -1649,7 +1659,7 @@ function viewHome(){renderCatbar('home');document.title='Distribuidora C y M · 
    <div class="step"><span class="n">3</span><div><h3>Le confirmamos</h3><p>Le confirmamos precio, disponibilidad y entrega antes de preparar su pedido.</p></div></div></div></section>
   <section class="wrap blk" aria-labelledby="h-faq"><div class="sh"><div><h2 id="h-faq" class="disp">Preguntas frecuentes</h2><p>Lo que más nos preguntan</p></div></div><div class="hfaq"><details class="faq"><summary>¿Los precios incluyen IVA?</summary><p>Sí. Todos los precios de la página ya incluyen el IVA y se toman directamente de nuestro sistema.</p></details><details class="faq"><summary>¿Tengo que pagar en línea?</summary><p>No. Usted arma su pedido aquí y nosotros le confirmamos el total, la disponibilidad y la forma de pago.</p></details><details class="faq"><summary>¿Hacen envíos?</summary><p>Sí. El envío es gratis en pedidos desde ₡110.000. En pedidos menores le confirmamos el costo junto con su pedido.</p></details><details class="faq"><summary>¿Puedo retirar en el local?</summary><p>Sí. Elija "Retiro en el local" al hacer el pedido y le avisamos cuando esté listo.</p></details><details class="faq"><summary>¿Venden por cantidad para obra o negocio?</summary><p>Sí. Al hacer el pedido marque "Es para obra o negocio" y le preparamos una cotización por volumen.</p></details><details class="faq"><summary>¿No encuentra un producto?</summary><p>Tenemos más productos en tienda. Escríbale al vendedor desde el botón "Pregúntele al vendedor" y le decimos si lo tenemos.</p></details></div></section>`;
   {const io2=('IntersectionObserver' in window)?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io2.unobserve(e.target)}}),{rootMargin:'0px 0px -30px 0px',threshold:0}):null;document.querySelectorAll('#view .blk').forEach((el,i)=>{if(!io2||i<2)return;el.classList.add('reveal');io2.observe(el)})}
-  autoSlide()}
+  bindHomeCat();autoSlide()}
 
 /* ===== listado ===== */
 function baseList(ctx){if(ctx==='guardados')return favs.map(id=>BY.get(id)).filter(Boolean);if(ctx==='search'){const r=searchSmart(S.q);S.fixed=r.fixed;return r.list}if(ctx==='regalos')return GIFTS();if(ctx==='brand')return P;if(ctx==='all')return P;return P.filter(p=>p.k===ctx)}
