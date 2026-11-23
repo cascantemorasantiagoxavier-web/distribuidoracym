@@ -36,7 +36,7 @@ function pw(id,ac){return `<div class="pw"><input id="${id}" type="password" aut
 function open(view,note){ov.hidden=false;document.body.style.overflow='hidden';render(view,note)}
 function tabs(v){return `<div class="tabs" role="tablist"><button type="button" class="${v==='login'?'on':''}" data-view="login">Ingresar</button><button type="button" class="${v==='registro'?'on':''}" data-view="registro">Crear cuenta</button></div>`}
 function render(v,note){
-  if(v==='login')body.innerHTML=`<h2 id="accth">Ingresar</h2>${note?`<p class="sub">${escH(note)}</p>`:'<p class="sub">Con su cuenta sus pedidos le llegan directo a la tienda.</p>'}${tabs(v)}
+  if(v==='login')body.innerHTML=`<h2 id="accth">Ingresar</h2>${note?`<p class="sub">${escH(note)}</p>`:'<p class="sub">Con su cuenta sus pedidos le llegan directo a la tienda. Mientras arma su pedido, la tienda puede ver su carrito y lo que busca, para atenderle mejor.</p>'}${tabs(v)}
    <form id="af-login" novalidate><div class="f"><label for="a-mail">Correo</label><input id="a-mail" type="email" autocomplete="email" required></div>
    <div class="f"><label for="a-pw">Contraseña</label>${pw('a-pw','current-password')}</div>
    <div class="msg" id="amsg" role="status"></div><button class="go" type="submit">Ingresar</button></form>
@@ -162,4 +162,16 @@ onAuthStateChanged(auth,async u=>{user=u;if(u){if(registering)return;
   if(await isAdminU(u)){perfil={nombre:'Administración',correo:u.email,mayoreo:true,admin:true};pendingOrder=false;ready();
     if(!editOn){editOn=true;import('./editar.js').then(m=>m.init({db,auth})).catch(()=>{})}return}
   await loadPerfil();pendingOrder=false;ready()}else{perfil=null;updBtn();gateCheck();if(editOn)location.reload()}});
+
+/* --- ver en vivo lo que el cliente busca y agrega (solo clientes con cuenta; se les avisa al ingresar) --- */
+let LVd={busq:[],vistos:[],t:0};
+function liveSend(){if(!user||!perfil||perfil.admin)return;const st=(window.CYM_liveState?window.CYM_liveState():{items:[]});
+  setDoc(doc(db,'envivo',user.uid),{uid:user.uid,nombre:String(perfil.nombre||user.displayName||'Cliente').slice(0,60),tel:String(perfil.tel||'').slice(0,20),sitio:SITE,items:st.items,busquedas:LVd.busq.slice(-15),vistos:LVd.vistos.slice(-10),actualizado:serverTimestamp()}).catch(()=>{})}
+function liveSoon(){clearTimeout(LVd.t);LVd.t=setTimeout(liveSend,1500)}
+addEventListener('cym:live',e=>{const d=e.detail||{};if(!user||!perfil||perfil.admin)return;
+  if(d.t==='search'&&d.q){const q=String(d.q).slice(0,60);if(LVd.busq[LVd.busq.length-1]!==q)LVd.busq.push(q)}
+  if(d.t==='view'&&d.id){if(!LVd.vistos.some(x=>x.id===d.id))LVd.vistos.push({id:d.id,n:String(d.nom||'').slice(0,80)})}
+  liveSoon()});
+setInterval(()=>{if(user&&perfil&&!perfil.admin&&!document.hidden)liveSend()},120000);
+
 }

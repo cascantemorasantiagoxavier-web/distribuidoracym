@@ -69,7 +69,7 @@ textarea{height:auto;padding:10px 12px}
 .ctog{display:flex;gap:6px;margin:0 0 10px;background:#eee;border-radius:12px;padding:4px}.ctog button{flex:1;min-height:44px;padding:0 4px;border:0;border-radius:9px;background:transparent;font-weight:700;font-size:14px}.ctog button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .pill.ok{background:#e3f6e8;color:#0a7a2f}.pill.gray{background:#eee;color:#555}
 </style>
-<script>(function(){var V='20261121073406';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V='20261123143223';try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(d&&d.v&&d.v!==V){var k='cymv_'+d.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1');var u=new URL(location.href);u.searchParams.set('v',d.v);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();</script>
 </head>
 <body>
 <header><img src="logo.webp" alt="C y M"><h1>Administración</h1><button id="out" hidden>Salir</button></header>
@@ -83,7 +83,7 @@ const app=initializeApp(CFG);const auth=getAuth(app);auth.languageCode='es';cons
 const $=s=>document.querySelector(s);const A=$('#app');
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EST={nuevo:'Nuevo',confirmado:'Confirmado',listo:'Listo para entregar',entregado:'Entregado',cancelado:'Cancelado'};
-let tab='nuevo',ords=[],clis=[],unsub=[],firstLoad=true,known=new Set(),filtro='';
+let tab='nuevo',vivos=[],ords=[],clis=[],unsub=[],firstLoad=true,known=new Set(),filtro='';
 function loginView(msg){A.innerHTML=`<div class="card login"><h2 style="margin:0 0 6px">Ingresar</h2><p style="margin:0;color:#555">Solo para la administración de la tienda.</p>
  <form id="lf"><label for="m">Correo</label><input id="m" type="email" autocomplete="email" required><label for="p">Contraseña</label><input id="p" type="password" autocomplete="current-password" required>
  <button class="go">Ingresar</button><div class="msg" id="lm">${esc(msg||'')}</div></form><button id="olv" style="background:none;border:0;text-decoration:underline;font-weight:600;margin-top:8px;padding:8px 0">¿Olvidó su contraseña?</button></div>`;
@@ -103,10 +103,19 @@ function csvExport(L){const rows=[['Fecha','Pedido','Cliente','Teléfono','Negoc
 function atPill(a){if(!a)return '';if(a.estado==='ok')return `<span class="pill at">ApliTeam: Cotización ${esc(a.cot||'')}${a.sinCodigo?' · '+esc(a.sinCodigo)+' sin código':''}</span>`;if(a.estado==='error')return `<span class="pill aterr" title="${esc(a.msg||'')}">ApliTeam: no se pudo pasar</span>`;return '<span class="pill">Pasando a ApliTeam…</span>'}
 function render(){const cnt=k=>ords.filter(o=>k==='todos'||(k==='proceso'?['confirmado','listo'].includes(o.estado):o.estado===k)).length;
  const nn=cnt('nuevo');document.title=(nn?`(${nn}) `:'')+'Administración · C y M';
- const T=[['nuevo','Nuevos'],['proceso','En proceso'],['entregado','Entregados'],['todos','Todos'],['clientes','Clientes'],['productos','Editar productos'],['tienda','Datos de la tienda']];
- let h=`<div class="tabs">${T.map(([k,l])=>`<button data-t="${k}" class="${tab===k?'on':''}">${l}${k==='clientes'?(clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length?`<span class="n">${clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length}</span>`:''):(cnt(k)&&k!=='todos'&&k!=='entregado'?`<span class="n">${cnt(k)}</span>`:'')}</button>`).join('')}</div>`;
+ const actv=v=>{const d=v.actualizado&&v.actualizado.seconds?v.actualizado.seconds*1000:0;return Date.now()-d<15*60000};const nv=vivos.filter(actv).length;const T=[['envivo','En vivo'],['nuevo','Nuevos'],['proceso','En proceso'],['entregado','Entregados'],['todos','Todos'],['clientes','Clientes'],['productos','Editar productos'],['tienda','Datos de la tienda']];
+ let h=`<div class="tabs">${T.map(([k,l])=>`<button data-t="${k}" class="${tab===k?'on':''}">${l}${k==='envivo'?(nv?`<span class="n">${nv}</span>`:''):k==='clientes'?(clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length?`<span class="n">${clis.filter(c=>c.solicitaMayoreo&&!c.mayoreo).length}</span>`:''):(cnt(k)&&k!=='todos'&&k!=='entregado'?`<span class="n">${cnt(k)}</span>`:'')}</button>`).join('')}</div>`;
  if(tab==='productos'||tab==='tienda'){const ex=$('#edwrap');if(ex&&ex.dataset.t===tab){const tb=A.querySelector('.tabs');if(tb)tb.outerHTML=h;return}A.innerHTML=h+(tab==='productos'?prodPanel():tiendaPanel());if(tab==='productos')prodInit();else tiendaInit();return}
- if(tab==='clientes'&&cliv==='sis'){h+=sisPanel()}
+ if(tab==='envivo'){const L=vivos.slice().sort((a,b)=>((b.actualizado&&b.actualizado.seconds)||0)-((a.actualizado&&a.actualizado.seconds)||0));
+  const ago=v=>{const m=Math.max(0,Math.round((Date.now()-((v.actualizado&&v.actualizado.seconds)||0)*1000)/60000));return m<1?'ahora mismo':m<60?'hace '+m+' min':'hace más de 1 hora'};
+  h+=`<p style="color:#555;margin:6px 0 10px">Clientes con cuenta que están armando un pedido. Se actualiza solo. Verde = activo en los últimos 15 minutos.</p><div class="list">${L.length?L.map(v=>{const it=v.items||[];const tot=it.reduce((a,x)=>a+(x.pr||0)*(x.q||0),0);const on=actv(v);
+   return `<div class="cli" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${on?'#1fa855':'#bbb'};margin-right:6px"></span>${esc(v.nombre||'Cliente')}</b><span style="color:#555;font-size:13px">${ago(v)}</span></div>
+   ${v.tel&&wa(v.tel)?`<a href="${wa(v.tel)}" target="_blank" rel="noopener" style="font-size:13px">${esc(v.tel)}</a>`:''}
+   <div style="margin-top:6px"><small style="color:#555">En el carrito (${it.length}):</small>${it.length?`<ul style="margin:4px 0 0 18px;padding:0">${it.map(x=>`<li>${x.q} × ${esc(x.t)} ${x.c?`<small style="color:#C8102E">Cód. ${esc(x.c)}</small>`:''} ${x.pr?`<small>${crc(x.pr*x.q)}</small>`:''}</li>`).join('')}</ul><div style="margin-top:4px"><b>Total aprox. ${crc(tot)}</b></div>`:' <small>vacío</small>'}</div>
+   ${(v.busquedas||[]).length?`<div style="margin-top:6px"><small style="color:#555">Ha buscado:</small> ${(v.busquedas||[]).slice().reverse().map(q=>`<span class="pill gray">${esc(q)}</span>`).join(' ')}</div>`:''}
+   ${(v.vistos||[]).length?`<div style="margin-top:6px"><small style="color:#555">Ha visto:</small> ${(v.vistos||[]).slice().reverse().map(x=>`<span class="pill gray">${esc(x.n||x.id)}</span>`).join(' ')}</div>`:''}</div>`}).join(''):'<div class="empty">Nadie está armando un pedido en este momento.</div>'}</div>`}
+
+ else if(tab==='clientes'&&cliv==='sis'){h+=sisPanel()}
 
  else if(tab==='clientes'){const L=clis.filter(c=>!filtro||JSON.stringify(c).toLowerCase().includes(filtro));
   h+=cliToggle()+`<input class="search" id="fs" placeholder="Buscar cliente por nombre, teléfono o correo" value="${esc(filtro)}"><div class="list">${L.length?L.map(c=>`<div class="cli"><div><b>${esc(c.nombre||'(sin nombre)')}</b> ${c.codigo?`<span class="pill ok">Cliente ApliTeam Nº ${esc(c.codigo)}</span>`:''} ${c.solicitaMayoreo&&!c.mayoreo?'<span class="pill">Pide mayoreo</span>':''}<br><small>${esc(c.tel||'')} · ${esc(c.correo||'')}${c.negocio?' · '+esc(c.negocio):''}</small>${c.dir?`<br><small>${esc(c.dir)}</small>`:''}</div>
@@ -216,6 +225,8 @@ onAuthStateChanged(auth,async u=>{unsub.forEach(f=>f());unsub=[];$('#out').hidde
  A.innerHTML='<div class="empty">Cargando pedidos…</div>';firstLoad=true;
  unsub.push(onSnapshot(query(collection(db,'pedidos'),orderBy('creado','desc'),limit(300)),s=>{ords=s.docs.map(d=>({id:d.id,...d.data()}));
    const nuevos=ords.filter(o=>o.estado==='nuevo'&&!known.has(o.id));if(!firstLoad&&nuevos.length)beep();ords.forEach(o=>known.add(o.id));firstLoad=false;render()},er=>{A.innerHTML='<div class="empty">No se pudieron cargar los pedidos.</div>'}));
+ unsub.push(onSnapshot(collection(db,'envivo'),s=>{vivos=s.docs.map(d=>({id:d.id,...d.data()}));if(tab==='envivo')render()},er=>{}));
+ setInterval(()=>{if(tab==='envivo')render()},30000);
  unsub.push(onSnapshot(collection(db,'cambios'),s=>{const c={productos:{},tienda:{},fotos:{}};s.forEach(d=>{c[d.id]=d.data()});CAMB=c;if(tab==='productos'&&!$('#fed'))prodList()},er=>{}));
  unsub.push(onSnapshot(collection(db,'clientes'),s=>{clis=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>((b.creado&&b.creado.seconds)||0)-((a.creado&&a.creado.seconds)||0));render()}))});
 </script>
